@@ -1,0 +1,689 @@
+/* =============================================== */
+/* CSS CUSTOM PROPERTIES (VARIABLEN)              */
+/* =============================================== */
+
+:root {
+  /* Farben */
+  --bg-primary: #222;
+  --text-primary: white;
+  --text-secondary: gray;
+  --text-accent: rgba(255, 255, 255, 0.914);
+  --text-link: rgba(255, 255, 255, 0.812);
+  --bubble-bg: rgb(6, 64, 17);
+  --bubble-border: rgb(100, 138, 107);
+  
+  /* Abstände */
+  --spacing-xs: 8px;
+  --spacing-sm: 10px;
+  --spacing-md: 15px;
+  --spacing-lg: 24px;
+  --spacing-xl: 30px;
+  --spacing-xxl: 40px;
+  
+  /* Schriftgrößen */
+  --font-size-base: 1em;
+  --font-size-lg: 1.2em;
+  --font-size-xl: 1.25em;
+  --font-size-2xl: 2.5em;
+  --font-size-3xl: 3em;
+  
+  /* Breakpoints */
+  --breakpoint-tablet: 840px;
+  --breakpoint-desktop: 1124px;
+  
+  /* Animationen */
+  --transition-fast: 0.1s linear;
+  --transition-medium: 0.3s ease;
+  --transition-slow: 0.5s ease-out;
+
+  --drag-x: 0px;
+  --drag-y: 0px;
+}
+
+/* =============================================== */
+/* RESET & BASE STYLES                            */
+/* =============================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Helvetica', 'Arial', sans-serif;
+  line-height: 1.2;
+  margin: 0;
+  padding: 0 var(--spacing-md);
+  display: block;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* =============================================== */
+/* UTILITY CLASSES                                */
+/* =============================================== */
+
+.content-spacer {
+  height: 80px;
+}
+
+.highlight-white {
+  color: var(--text-accent);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* =============================================== */
+/* NAVIGATION                                     */
+/* =============================================== */
+
+.sidebar {
+  width: 100%;
+  margin-bottom: var(--spacing-xxl);
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}
+
+.sidebar li a {
+  display: block;
+  padding: var(--spacing-xs) var(--spacing-md);
+  text-decoration: none;
+  color: var(--text-secondary);
+  font-weight: normal;
+  transition: color var(--transition-medium), font-weight var(--transition-medium);
+  border-radius: 4px;
+}
+
+.sidebar li a:hover,
+.sidebar li a:focus {
+   color: var(--text-primary);
+
+}
+
+/* Hover-Effekt nur auf Geräten mit präzisen Zeigegeräten */
+@media (hover: hover) and (pointer: fine) {
+  .sidebar li a:hover:not(.active) {
+    color: rgba(255, 255, 255, 0.8);
+  }
+}
+
+/* Aktiver Zustand hat Priorität */
+.sidebar li a.active {
+  color: var(--text-primary);
+  font-weight: bold;
+}
+
+/* =============================================== */
+/* HEADER & INTRO                                 */
+/* =============================================== */
+
+#about {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-xl);
+  align-items: start;
+  margin: 0 auto 100px auto;
+  max-width: 900px;
+}
+
+.intro-text h1 {
+  font-size: var(--font-size-2xl);
+  margin: 0 0 16px 0;
+  font-weight: 600;
+}
+
+.intro-text p {
+  font-size: 1.6em;
+  line-height: 1.2;
+  margin-bottom: var(--spacing-lg);
+  font-weight: 300;
+  color: var(--text-secondary);
+}
+
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--text-link);
+  text-decoration: none;
+  margin: 5px 0 18px 0;
+  font-weight: 500;
+  transition: text-decoration var(--transition-medium);
+}
+
+.social-link:hover,
+.social-link:focus {
+  text-decoration: underline;
+}
+
+.social-link img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+/* =============================================== */
+/* INTRO VISUALS & MASCOT                        */
+/* =============================================== */
+
+.intro-visuals {
+  position: relative;
+  margin: 0 auto;
+}
+
+.profile-picture {
+  width: 100%;
+  max-width: 250px;
+  border-radius: 8px;
+}
+
+.mascot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: -10px;
+  gap: var(--spacing-sm);
+}
+
+.mascot p,
+.mascot2 p {
+  transform: rotate(-12deg);
+  font-size: var(--font-size-xl);
+  text-align: center;
+  margin: 0;
+}
+
+.mascot-name {
+  font-weight: bold;
+  font-size: var(--font-size-lg);
+}
+
+.mascot-image {
+  width: 120px;
+}
+
+.mascot2 {
+  position: relative;
+  left: -250px;
+  display: none;
+  transition: opacity var(--transition-medium), visibility var(--transition-medium);
+}
+
+.mascot2.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.mascot2-image {
+  position: relative;
+  width: 100px;
+  left: 170px;
+  top: -60px;
+  transform: rotate(30deg);
+}
+
+/* =============================================== */
+/* INTERACTION EXPLAINER                          */
+/* =============================================== */
+
+.interaction-explainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: -60px 0 -13% 0;
+  text-align: center;
+  animation: jiggleCycle 3s ease-in-out infinite;
+}
+
+@keyframes jiggleCycle {
+  0%, 20%, 100% { transform: rotate(0deg); }
+  5% { transform: rotate(-5deg); }
+  10% { transform: rotate(5deg); }
+  15% { transform: rotate(-5deg); }
+}
+
+.interaction {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+.interaction p {
+  font-size: var(--font-size-xl);
+  color: var(--text-primary);
+  font-weight: 300;
+  margin: 0;
+}
+
+.arrow {
+  width: 100px;
+  height: auto;
+  margin-top: -30px;
+}
+
+/* =============================================== */
+/* VIDEO OVERLAY                           */
+/* =============================================== */
+
+/* =============================================== */
+/* VIDEO OVERLAY */
+/* =============================================== */
+#video-overlay {
+    display: none;
+    position: fixed;
+    top: 0; 
+    left: 0;
+    width: 100%; 
+    height: 100%;
+    background: rgba(0,0,0,0.85);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+#video-overlay.active {
+    display: flex;
+}
+
+/* Wrapper passt sich dynamisch an die Videogröße an */
+.video-wrapper {
+    position: relative;
+    display: inline-block; /* <- passt sich der Größe vom Video an */
+}
+
+#overlay-video {
+    max-width: 90vw;
+    max-height: 90vh;
+    border-radius: 12px;
+    object-fit: contain; 
+}
+
+/* Button sitzt jetzt relativ zum Video */
+#close-overlay {
+    position: absolute;
+    top: -35px;
+    right: 0px;
+    font-size: 2rem;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+#close-overlay:hover {
+    background-color: rgba(255,255,255,0.2);
+}
+
+
+/* =============================================== */
+/* PROJECT GALLERIES                              */
+/* =============================================== */
+
+.projekt {
+  margin-top: 50px;
+}
+
+.projekt-galerie {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-sm);
+}
+
+.projekt-galerie2 {
+  display: grid;
+  grid-template-columns: 1.1443fr 1fr;
+  gap: 0;
+}
+
+.projekt-galerie3 {
+  display: grid;
+  grid-template-columns: 1.55fr 2fr; 
+  gap: 10px;
+}
+
+
+.left {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.logo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-sm);
+}
+
+.ui-beispiele img {
+  margin-bottom: var(--spacing-sm);
+}
+
+/* =============================================== */
+/* BISCHNABLU MASCOT                              */
+/* =============================================== */
+
+.bischnablu {
+  display: none;
+  z-index: 100;
+}
+
+.bischnablu-grafik {
+  left: 10%;
+  display: none;
+}
+
+.bischnablu-body {
+  position: absolute;
+  width: 54%;
+  top: 8px;
+  left: 5px;
+}
+
+.bischnablu-head-container {
+  position: absolute;
+  width: 50%;
+  top: 10px;
+  left: 10px;
+  transition: transform var(--transition-fast);
+}
+
+/* In style.css */
+.bischnablu-container {
+  transform: 
+    translate(var(--drag-x, 0px), calc(var(--drag-y, 0px) - 155px)) 
+    rotateZ(var(--drag-rotate-z, 0deg));
+}
+
+.bischnablu-head {
+  width: 100%;
+}
+
+.bischnablu-eye {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.05s linear;
+}
+
+.eye-left {
+  top: 50px;
+  left: 32px;
+}
+
+.eye-right {
+  top: 50px;
+  left: 62px;
+}
+
+.bischnablu-bubble {
+  position: absolute;
+  background: var(--bubble-bg);
+  color: var(--text-primary);
+  padding: var(--spacing-md);
+  border-radius: 10px;
+  width: 180px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  border: 1px solid var(--bubble-border);
+  bottom: 150px;
+  left: -50px;
+  z-index: 5;
+  visibility: hidden;
+}
+
+.bischnablu-bubble::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  width: 44px;
+  height: 23px;
+  bottom: -15px;
+  left: 30%;
+  transform: translateX(-50%);
+  background-image: url("data:image/svg+xml,%3Csvg width='44' height='23' viewBox='0 0 44 23' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M25.2683 0.906543C27.315 -0.0570641 32.6433 0.944083 33.7683 2.90668L43.2683 18.9075C44.0456 21.6118 42.0576 22.87 38.886 21.871L3.76827 8.40673C0.596635 7.40774 -0.183362 7.55474 1.8633 6.59113L25.2683 0.906543Z' fill='rgb(100, 138, 107)'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+}
+
+.bubble-text span {
+  opacity: 0;
+  animation: fadeInLetter 0.2s forwards;
+}
+
+@keyframes fadeInLetter {
+  from { 
+    opacity: 0; 
+    transform: scale(2); 
+    filter: blur(5px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: scale(1); 
+    filter: blur(0); 
+  }
+}
+
+.svg-foreground {
+  position: absolute;
+  width: 44px;
+  height: 23px;
+  bottom: -14px;
+  left: 30%;
+  transform: translateX(-50%);
+}
+
+.svg-foreground path {
+  fill: var(--bubble-bg);
+}
+
+/* =============================================== */
+/* SPECIAL EFFECTS                               */
+/* =============================================== */
+
+.gradient-text-hover {
+  background: radial-gradient(
+    circle at center,
+    #ffffff 20%,
+    #919191 50%,
+    #ffffff 80%
+  );
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  transition: background-position var(--transition-slow);
+}
+
+.card {
+ 
+  perspective: 1000px; /* sorgt für 3D-Effekt */
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.card:hover .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-front,
+.card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden; /* verhindert, dass man die andere Seite durchscheinen sieht */
+}
+
+.card-back {
+  transform: rotateY(180deg);
+}
+
+
+/* =============================================== */
+/* RESPONSIVE DESIGN - TABLET                     */
+/* =============================================== */
+
+@media (min-width: 840px) {
+  body {
+    display: grid;
+    grid-template-columns: 10px minmax(600px, 1fr) 200px 0.4fr;
+    column-gap: var(--spacing-xxl);
+    padding: 0;
+  }
+
+  .content {
+    grid-column: 2;
+  }
+
+  #about {
+    margin-top: -150px;
+  }
+
+  .intro-text p {
+    font-size: 1.7em;
+  }
+
+  .interaction-explainer{
+    margin-top: -150px;
+  }
+
+  
+
+
+  .bischnablu {
+    display: block;
+    grid-column: 3;
+    position: sticky;
+    top: 450px;
+    align-self: start;
+    transform: translateX(10%);
+  }
+
+  .sidebar {
+    grid-column: 1 / -1;
+    padding: 0 var(--spacing-md);
+    position: static;
+  }
+
+  .mascot {
+    visibility: hidden;
+  }
+
+  .mascot2 {
+    opacity: 1;
+    visibility: visible;
+    display: inline;
+  }
+}
+
+/* =============================================== */
+/* RESPONSIVE DESIGN - DESKTOP                    */
+/* =============================================== */
+
+@media (min-width: 1124px) {
+  body {
+    grid-template-columns: 0.4fr 200px minmax(600px, 1fr) 200px 0.4fr;
+  }
+
+  .sidebar {
+    grid-column: 2;
+    position: sticky;
+    top: 100px;
+    align-self: start;
+    margin-bottom: 0;
+  }
+
+
+  .sidebar ul {
+    display: block;
+  }
+
+  .content {
+    grid-column: 3;
+    max-width: 800px;
+  }
+
+  .bischnablu {
+    grid-column: 4;
+  }
+
+
+  #about {
+    grid-template-columns: 1.5fr 1fr;
+    margin-top: -80px;
+  }
+
+  .intro-text h1 {
+    font-size: var(--font-size-3xl);
+  }
+
+  
+
+  .projekt-galerie {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .logo-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .interaction-explainer {
+    margin-top: -50px;
+  }
+}
+
+/* =============================================== */
+/* ACCESSIBILITY & PRINT STYLES                  */
+/* =============================================== */
+
+
+
+@media print {
+  .sidebar,
+  .bischnablu,
+  .interaction-explainer {
+    display: none;
+  }
+
+  body {
+    background: white;
+    color: black;
+    display: block;
+    padding: 1cm;
+  }
+}
