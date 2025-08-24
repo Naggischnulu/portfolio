@@ -21,24 +21,28 @@
     
     <!-- Main Navigation -->
     <nav class="sidebar" role="navigation" aria-label="Main navigation">
-        <ul>
-            <li><a href="#about" aria-describedby="about-desc">About me</a></li>
-            <li><a href="#mottenblau" aria-describedby="mottenblau-desc">Studio Mottenblau</a></li>
-            <li><a href="#lotl" aria-describedby="lotl-desc">Lord of the Lice</a></li>
-            <li><a href="#claw" aria-describedby="claw-desc">Claw</a></li>
-            <li><a href="#rose" aria-describedby="rose-desc">Sozialen Rosen</a></li>
-            <li><a href="#logos" aria-describedby="logos-desc">Logos</a></li>
-        </ul>
-        
-        <!-- Hidden descriptions for screen readers -->
-        <div class="visually-hidden">
-            <span id="about-desc">Personal information and introduction</span>
-            <span id="mottenblau-desc">Film collective visual identity project</span>
-            <span id="lotl-desc">Strategy game development project</span>
-            <span id="claw-desc">Music video and album art project</span>
-            <span id="logos-desc">Logo design portfolio</span>
-        </div>
-    </nav>
+    <button class="burger-menu-button" aria-expanded="false" aria-controls="nav-links-list">
+        <span class="visually-hidden">Menü öffnen/schließen</span>
+        <span class="burger-icon"></span>
+    </button>
+    
+    <ul id="nav-links-list">
+        <li><a href="#about" aria-describedby="about-desc">About me</a></li>
+        <li><a href="#mottenblau" aria-describedby="mottenblau-desc">Studio Mottenblau</a></li>
+        <li><a href="#lotl" aria-describedby="lotl-desc">Lord of the Lice</a></li>
+        <li><a href="#claw" aria-describedby="claw-desc">Claw</a></li>
+        <li><a href="#rose" aria-describedby="rose-desc">Sozialen Rosen</a></li>
+        <li><a href="#logos" aria-describedby="logos-desc">Logos</a></li>
+    </ul>
+    
+    <div class="visually-hidden">
+        <span id="about-desc">Personal information and introduction</span>
+        <span id="mottenblau-desc">Film collective visual identity project</span>
+        <span id="lotl-desc">Strategy game development project</span>
+        <span id="claw-desc">Music video and album art project</span>
+        <span id="logos-desc">Logo design portfolio</span>
+    </div>
+</nav>
 
     <!-- Interactive Mascot -->
     <aside class="bischnablu" role="complementary" aria-label="Interactive mascot">
@@ -88,6 +92,10 @@
                         <img src="images/instagram.png" alt="Instagram" width="24" height="24">
                         <span>nigomasu</span>
                     </a>
+                    <a class="social-link" href="mailto:nicolas-thiele@gmx.de" target="_blank" rel="noopener noreferrer" aria-label="Contact me">
+                        <img src="images/mail.png" alt="Instagram" width="24" height="24">
+                        <span>nicolas-thiele@gmx.de</span>
+                    </a>
                 </div>
             </div>
         
@@ -134,7 +142,7 @@
             <div class="projekt-galerie">
                 <article class="projekt-item" data-text="The short film <b>Perfekt</b> was shown at the German short film festival <i>Flimmern und Rauschen</i> in 2021">
                     <a href="https://www.youtube.com/watch?v=_IE59hfcWHI" target="_blank" rel="noopener noreferrer" aria-label="Watch Perfekt short film">
-                        <img src="images/perfekt.png" alt="Perfekt short film poster">
+                        <img src="images/perfekt.jpg" alt="Perfekt short film poster">
                     </a>
                 </article>
                 
@@ -146,7 +154,7 @@
                 
                 <article class="projekt-item" data-text="Ansa is a creative project exploring narrative themes">
                     <a href="https://www.youtube.com/watch?v=gl4DXRnoizw" target="_blank" rel="noopener noreferrer" aria-label="Watch Ansa project">
-                        <img src="images/ansa.png" alt="Ansa project artwork">
+                        <img src="images/ansa.jpg" alt="Ansa project artwork">
                     </a>
                 </article>
                 
@@ -214,24 +222,17 @@
             <header class="projekt-header">
                 <h2 class="visually-hidden">Claw Music Project</h2>
                 <div class="projekt-item" data-text="During my one-year stay abroad in Japan at <i>Surugadai University,</i> I created the music video and album art for a Japanese musician">
+                    <a href="https://www.instagram.com/p/C0mVRHyyqGo/?utm_source=ig_web_copy_link&igsh=MWtjbm9jMTV6MnkzaA==" target="_blank">
                     <img src="images/claw_header.gif" alt="Animated header for Claw music project">
+
+                    </a>
                 </div>
             </header>
 
-            <div class="projekt-galerie">
-                <article class="projekt-item" data-text="During my one-year stay abroad in Japan at <i>Surugadai University,</i> I created the music video and album art for a Japanese musician">
-                    <img src="images/claw1.jpg" alt="Claw album artwork design 1">
+             <article class="projekt-item" data-text="During my one-year stay abroad in Japan at <i>Surugadai University,</i> I created the music video and album art for a Japanese musician">
+                    <img src="images/claw_colors.jpg" alt="Claw music video visual 2">
                 </article>
-                <article class="projekt-item" data-text="During my one-year stay abroad in Japan at <i>Surugadai University,</i> I created the music video and album art for a Japanese musician">
-                    <img src="images/claw2.png" alt="Claw music video visual 1">
-                </article>
-                <article class="projekt-item" data-text="During my one-year stay abroad in Japan at <i>Surugadai University,</i> I created the music video and album art for a Japanese musician">
-                    <img src="images/claw3.png" alt="Claw music video visual 2">
-                </article>
-                <article class="projekt-item" data-text="During my one-year stay abroad in Japan at <i>Surugadai University,</i> I created the music video and album art for a Japanese musician">
-                    <img src="images/claw4.png" alt="Claw music video visual 3">
-                </article>
-            </div>
+
         </section>
 
          <!-- Soziale Rosen Section -->
@@ -239,9 +240,13 @@
         
          <div class="projekt-galerie3">
           <div class="left">
-            <img src="images/sozialerosen.png" alt="Mother louse character design" class="projekt-item" data-text="Logo for the startup <b>Die Sozialen Rosen</b> (The Social Roses)" >
+             <a href="https://www.instagram.com/die_sozialen_rosen/" target="_blank" rel="noopener noreferrer" aria-label="Visit Die Sozialen Rosen Instagram">
+                        <img src="images/sozialerosen.png" alt="Die Sozialen Rosen logo">
+                    </a>
             
-            <img src="images/sozialerosen2.jpg" alt="Game building interface" class="projekt-item" data-text="Logo for the startup <b>Die Sozialen Rosen</b> (The Social Roses)">
+             <a href="https://www.instagram.com/die_sozialen_rosen/" target="_blank" rel="noopener noreferrer" aria-label="Visit Die Sozialen Rosen Instagram">
+                        <img src="images/sozialerosen2.jpg" alt="Die Sozialen Rosen logo">
+                    </a>
             </div>
             <div class="card projekt-item" data-text="Business card design for <b>Die Sozialen Rosen</b>">
                     <div class="card-inner">
@@ -271,7 +276,7 @@
                 
                 <article class="projekt-item" data-text="Logo for the musician <b>WaveMelody</b>">
                     <a href="https://www.youtube.com/@WaveMelody" target="_blank" rel="noopener noreferrer" aria-label="Visit WaveM YouTube channel">
-                        <img src="images/wavemelody.png" alt="WaveM logo design">
+                        <img src="images/wavemelody.jpg" alt="WaveM logo design">
                     </a>
                 </article>
                 
@@ -300,7 +305,7 @@
                 </article>
                 
                 <article class="projekt-item" data-text="Kubik logo design">
-                    <img src="images/kubik.png" alt="Kubik logo design">
+                    <img src="images/kubik.jpg" alt="Kubik logo design">
                 </article>
                 
                 <article class="projekt-item" data-text="Logo of the student council of the Technical University of Applied Sciences Rosenheim: Campus Mühldorf">

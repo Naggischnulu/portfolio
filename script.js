@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 letters.forEach(letter => {
                     const letterSpan = document.createElement('span');
                     letterSpan.textContent = letter;
-                    letterSpan.style.animationDelay = `${charIndex * 30}ms`;
+                    letterSpan.style.animationDelay = `${charIndex * 21}ms`;
                     wordWrapper.appendChild(letterSpan);
                     charIndex++;
                 });
@@ -585,4 +585,38 @@ document.addEventListener('DOMContentLoaded', function() {
             document.addEventListener('mouseup', endDrag);
         }
     }
+
+    // --- NEU: BURGER MENU LOGIK ---
+const burgerButton = document.querySelector('.burger-menu-button');
+const navLinksList = document.getElementById('nav-links-list');
+const navLinksItems = navLinksList.querySelectorAll('a');
+
+if (burgerButton && navLinksList) {
+    burgerButton.addEventListener('click', () => {
+        const isOpen = navLinksList.classList.toggle('is-open');
+        burgerButton.setAttribute('aria-expanded', isOpen);
+        document.body.classList.toggle('menu-open', isOpen);
+    });
+
+    // Menü schließen, wenn ein Link geklickt wird
+    navLinksItems.forEach(link => {
+        link.addEventListener('click', () => {
+            if (navLinksList.classList.contains('is-open')) {
+                navLinksList.classList.remove('is-open');
+                burgerButton.setAttribute('aria-expanded', 'false');
+                document.body.classList.remove('menu-open');
+            }
+        });
+    });
+
+    // Menü schließen, wenn außerhalb geklickt wird
+    document.addEventListener('click', (e) => {
+        // Überprüfen, ob das Menü offen ist und der Klick außerhalb des Menüs und des Buttons stattfand
+        if (navLinksList.classList.contains('is-open') && !navLinksList.contains(e.target) && !burgerButton.contains(e.target)) {
+            navLinksList.classList.remove('is-open');
+            burgerButton.setAttribute('aria-expanded', 'false');
+            document.body.classList.remove('menu-open');
+        }
+    });
+}
 });
