@@ -223,6 +223,23 @@ document.addEventListener('DOMContentLoaded', function() {
         bubble.style.position = 'absolute';
         bubble.style.bottom = '20px';
 
+        const elementsWithDataText = document.querySelectorAll('[data-text]');
+    
+        elementsWithDataText.forEach(element => {
+        const currentText = element.getAttribute('data-text');
+        
+        // Ersetze "click" durch "tap" oder umgekehrt
+        const updatedText = currentText.replace(
+            /\[click the image to see more\]/gi, 
+            `[tap the icon on the right to see more]`
+        );
+        
+        element.setAttribute('data-text', updatedText);
+        });
+        
+
+
+
         // --- NEUE LOGIK: Ein Event-Listener für alle interaktiven Items (inkl. Videos) ---
         projektItems.forEach(item => {
             item.addEventListener('click', function(e) {
