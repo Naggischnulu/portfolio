@@ -415,7 +415,7 @@ img {
 /* Wrapper passt sich dynamisch an die Videogröße an */
 .video-wrapper {
     position: relative;
-    display: inline-block; /* <- passt sich der Größe vom Video an */
+    display: inline-block; 
 }
 
 #overlay-video {
@@ -425,7 +425,6 @@ img {
     object-fit: contain; 
 }
 
-/* Button sitzt jetzt relativ zum Video */
 #close-overlay {
     position: absolute;
     top: -35px;
@@ -628,7 +627,7 @@ img {
 
 .card {
  
-  perspective: 1000px; /* sorgt für 3D-Effekt */
+  perspective: 1000px; /* 3D-Effekt */
 }
 
 .card-inner {

@@ -239,8 +239,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
 
 
-
-        // --- NEUE LOGIK: Ein Event-Listener für alle interaktiven Items (inkl. Videos) ---
         projektItems.forEach(item => {
             item.addEventListener('click', function(e) {
                 const linkElement = this.querySelector('a');
@@ -294,7 +292,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }, true);
     } else {
         // --- DESKTOP LOGIK ---
-        // (Unverändert, direkte Klicks auf Videos funktionieren hier weiterhin)
         const wideScreenMouseOver = (e) => updateBubbleText(e.currentTarget.dataset.text);
         const wideScreenMouseLeave = () => {
             clearTimeout(typingTimeout);
@@ -431,7 +428,6 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('scroll', highlightActiveLink);
     highlightActiveLink(); // Initiale Ausführung
     
-    // --- NEUE LOGIK: Video-Listener nur für Desktop ---
     if (!isTouchDevice) {
     // Suche nach allen Elementen, die Videos haben können
     const videoElements = document.querySelectorAll('[data-video]');
@@ -603,7 +599,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // --- NEU: BURGER MENU LOGIK ---
+    // --- BURGER MENU LOGIK ---
 const burgerButton = document.querySelector('.burger-menu-button');
 const navLinksList = document.getElementById('nav-links-list');
 const navLinksItems = navLinksList.querySelectorAll('a');
