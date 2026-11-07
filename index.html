@@ -1,330 +1,327 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Nicolas Thiele - Aspiring graphic designer with passion for photography and interface design">
-    <meta name="keywords" content="graphic design, photography, video game design, portfolio">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nicolas Thiele – Portfolio</title>
+    <meta name="description" content="Portfolio of Nicolas Thiele – aspiring graphic designer with a passion for web development and interface design.">
     <meta name="author" content="Nicolas Thiele">
-    
-    <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="Nicolas Thiele - Graphic Designer">
-    <meta property="og:description" content="Portfolio of Nicolas Thiele - Graphic designer, photographer, and interface designer">
+    <meta name="theme-color" content="#222222">
+    <link rel="canonical" href="https://nicolasthiele.de/">
+
+    <!-- Vorschau beim Teilen (WhatsApp, LinkedIn, Discord, …) -->
     <meta property="og:type" content="website">
-    
-    <title>Nicolas Thiele - Portfolio</title>
+    <meta property="og:url" content="https://nicolasthiele.de/">
+    <meta property="og:title" content="Nicolas Thiele – Portfolio">
+    <meta property="og:description" content="Aspiring graphic designer with a passion for web development and interface design.">
+    <meta property="og:image" content="https://nicolasthiele.de/images/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Nicolas Thiele and his mascot Bischnablu">
+    <meta name="twitter:card" content="summary_large_image">
+
     <link rel="icon" href="images/favicon.png" type="image/png">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
     <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Nicolas Thiele",
+        "url": "https://nicolasthiele.de/",
+        "image": "https://nicolasthiele.de/images/me.webp",
+        "jobTitle": "Graphic Designer",
+        "email": "mailto:nicolas.thiele@proton.me",
+        "sameAs": ["https://www.instagram.com/nigomasu"]
+    }
+    </script>
 </head>
 <body>
-    <!-- Skip to main content for screen readers -->
-    <a href="#main-content" class="visually-hidden">Skip to main content</a>
-    
-    <!-- Main Navigation -->
-    <nav class="sidebar" role="navigation" aria-label="Main navigation">
-    <button class="burger-menu-button" aria-expanded="false" aria-controls="nav-links-list">
-        <span class="visually-hidden">Menü öffnen/schließen</span>
-        <span class="burger-icon"></span>
-    </button>
-    
-    <ul id="nav-links-list">
-        <li><a href="#about" aria-describedby="about-desc">About me</a></li>
-        <li><a href="#mottenblau" aria-describedby="mottenblau-desc">Studio Mottenblau</a></li>
-        <li><a href="#lotl" aria-describedby="lotl-desc">Lord of the Lice</a></li>
-        <li><a href="#claw" aria-describedby="claw-desc">Claw</a></li>
-        <li><a href="#rose" aria-describedby="rose-desc">Sozialen Rosen</a></li>
-        <li><a href="#logos" aria-describedby="logos-desc">Logos</a></li>
-    </ul>
-    
-    <div class="visually-hidden">
-        <span id="about-desc">Personal information and introduction</span>
-        <span id="mottenblau-desc">Film collective visual identity project</span>
-        <span id="lotl-desc">Strategy game development project</span>
-        <span id="claw-desc">Music video and album art project</span>
-        <span id="logos-desc">Logo design portfolio</span>
-    </div>
-</nav>
+    <a class="skip-link" href="#main">Skip to content</a>
 
-    <!-- Interactive Mascot -->
-    <aside class="bischnablu" role="complementary" aria-label="Interactive mascot">
-        <div class="mascot2">
-            <p>This is <br> <span class="mascot-name">Bischnablu</span>, <br> my mascot</p>
-            <img class="mascot2-image" src="images/curly.png" alt="Bischnablu mascot illustration">
-        </div>
+    <!-- Icons (werden unten per <use href="#i-…"> eingebunden) -->
+    <svg class="sprite" aria-hidden="true">
+        <symbol id="i-instagram" viewBox="0 0 24 24">
+            <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/>
+            <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+            <circle cx="17.3" cy="6.7" r="1.3" fill="currentColor"/>
+        </symbol>
+        <symbol id="i-youtube" viewBox="0 0 24 24">
+            <path fill="currentColor" fill-rule="evenodd" d="M22.5 7.2a2.9 2.9 0 0 0-2-2C18.6 4.7 12 4.7 12 4.7s-6.6 0-8.5.5a2.9 2.9 0 0 0-2 2C1 9.1 1 12 1 12s0 2.9.5 4.8a2.9 2.9 0 0 0 2 2c1.9.5 8.5.5 8.5.5s6.6 0 8.5-.5a2.9 2.9 0 0 0 2-2c.5-1.9.5-4.8.5-4.8s0-2.9-.5-4.8ZM9.8 15.1V8.9l5.4 3.1-5.4 3.1Z"/>
+        </symbol>
+        <symbol id="i-mail" viewBox="0 0 24 24">
+            <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round">
+                <rect x="2.5" y="5" width="19" height="14" rx="1"/>
+                <path d="m3 5.8 9 7.4 9-7.4M3 18.4l6.8-6.6M21 18.4l-6.8-6.6"/>
+            </g>
+        </symbol>
+        <symbol id="i-play" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M8 5.6v12.8a1 1 0 0 0 1.5.9l10.2-6.4a1 1 0 0 0 0-1.8L9.5 4.7A1 1 0 0 0 8 5.6Z"/>
+        </symbol>
+        <symbol id="i-link" viewBox="0 0 24 24">
+            <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 4h6v6M20 4l-9 9"/>
+                <path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>
+            </g>
+        </symbol>
+        <symbol id="i-close" viewBox="0 0 24 24">
+            <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </symbol>
+    </svg>
 
-        <div class="bischnablu-grafik">
-          <div class="bischnablu-container">  <!-- New scalable wrapper -->
-        <img class="bischnablu-body" src="images/bischnablu_body.png" alt="Bischnablu body">
-        
-        <div class="bischnablu-head-container">
-            <img class="bischnablu-head" src="images/bischnablu_head.png" alt="Bischnablu head"> 
-            
-            <!-- Interactive eyes -->
-            <div class="bischnablu-eye eye-left" aria-hidden="true"></div>
-            <div class="bischnablu-eye eye-right" aria-hidden="true"></div>
-        </div>
-    </div>
-</div>
+    <div class="page">
+        <nav class="site-nav" aria-label="Main">
+            <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-list" aria-label="Menu">
+                <span class="nav-toggle-icon"></span>
+            </button>
+            <ul class="nav-list" id="nav-list">
+                <li><a href="#about">About me</a></li>
+                <li><a href="#mottenblau">Studio Mottenblau</a></li>
+                <li><a href="#lotl">Lord of the Lice</a></li>
+                <li><a href="#claw">Claw</a></li>
+                <li><a href="#rose">Die Sozialen Rosen</a></li>
+                <li><a href="#logos">Logos</a></li>
+            </ul>
+        </nav>
 
-        <div class="bischnablu-bubble" role="tooltip">
-            <span class="bubble-text"></span>
-            
-            <svg class="svg-foreground" width="44" height="23" viewBox="0 0 44 23" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <path d="M25.2683 0.906543C27.315 -0.0570641 32.6433 0.944083 33.7683 2.90668L43.2683 18.9075C44.0456 21.6118 42.0576 22.87 38.886 21.871L3.76827 8.40673C0.596635 7.40774 -0.183362 7.55474 1.8633 6.59113L25.2683 0.906543Z"/>
-            </svg>
-        </div>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="content" id="main-content">
-        <!-- About Section -->
-        <header id="about" class="intro-header">
-            <div class="intro-text">
-                <h1 class="gradient-text-hover">Nicolas Thiele</h1>
-                <p>I am an aspiring 
-                    <span class="highlight-white gradient-text-hover">graphic designer</span>, with a passion for 
-                    <span class="highlight-white gradient-text-hover">web development</span> and 
-                    <span class="highlight-white gradient-text-hover">interface design</span> who has contributed to numerous creative projects.
-                </p>
-                
-                <!-- Social Links -->
-                <div class="social-links">
-                    <a class="social-link" href="https://www.instagram.com/nigomasu" target="_blank" rel="noopener noreferrer" aria-label="Visit my Instagram profile">
-                        <img src="images/instagram.png" alt="Instagram" width="24" height="24">
-                        <span>nigomasu</span>
-                    </a>
-                    <a class="social-link" href="mailto:nicolas.thiele@proton.me" target="_blank" rel="noopener noreferrer" aria-label="Contact me">
-                        <img src="images/mail.png" alt="Instagram" width="24" height="24">
-                        <span>nicolas.thiele@proton.me</span>
-                    </a>
+        <main class="content" id="main">
+            <!-- ABOUT -->
+            <header class="intro" id="about">
+                <div class="intro-text">
+                    <h1 class="shimmer">Nicolas Thiele</h1>
+                    <p class="intro-lead">I am an aspiring <span class="shimmer">graphic designer</span> with a passion for <span class="shimmer">web development</span> and <span class="shimmer">interface design</span> who has contributed to numerous creative projects.</p>
+                    <ul class="links">
+                        <li><a href="https://www.instagram.com/nigomasu" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-instagram"/></svg><span class="visually-hidden">Instagram:</span> nigomasu</a></li>
+                        <li><a href="mailto:nicolas.thiele@proton.me"><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg><span class="visually-hidden">E-mail:</span> nicolas.thiele@proton.me</a></li>
+                    </ul>
                 </div>
-            </div>
-        
-            <div class="intro-visuals">
-                <img class="profile-picture" src="images/me.jpeg" alt="Portrait photo of Nicolas Thiele">
-                
-                <div class="mascot">
-                    <p>This is <br> <span class="mascot-name">Bischnablu</span>, <br> my mascot</p>
-                    <img class="mascot-image" src="images/bischnablu2.png" alt="Bischnablu mascot character">
+
+                <div class="intro-visual">
+                    <img class="portrait" src="images/me.webp" width="600" height="722" alt="Portrait of Nicolas Thiele" fetchpriority="high">
+                    <!-- Nur auf schmalen Bildschirmen; auf breiten steht Bischnablu in der rechten Spalte -->
+                    <div class="intro-mascot">
+                        <p class="mascot-note">This is<br><b>Bischnablu</b>,<br>my mascot</p>
+                        <img src="images/bischnablu2.webp" width="360" height="340" alt="" loading="lazy">
+                    </div>
                 </div>
-            </div>
-        </header>
+            </header>
 
-        <!-- Interaction Guide -->
-        <div class="interaction-explainer" role="banner">
-            <div class="interaction">
-                <p><span class="mascot-name">Hover</span> any image <br> to see more info!</p>
-                <img class="arrow" src="images/curly_arrow.png" alt="Decorative arrow pointing down" aria-hidden="true">
+            <div class="hint" aria-hidden="true">
+                <p><b class="on-hover">Hover</b><b class="on-touch">Tap</b> any image<br>to see more info!</p>
+                <img src="images/curly_arrow.webp" width="300" height="383" alt="">
             </div>
-        </div>
 
-        <!-- Studio Mottenblau Section -->
-        <section id="mottenblau" class="projekt">
-            <header class="projekt-header">
+            <!--
+                Projekte: Jedes Element mit data-text ist "hoverbar" – Bischnablu liest den Text vor.
+                Erlaubt sind <b>, <i> und <br>: <b> für den Namen dessen, was man sieht (einmal),
+                <i> für andere Namen als Kontext (Festival, Uni, Software). Ein Link (<a>) im Element wird automatisch erkannt;
+                Links mit data-video öffnen das Video im Overlay statt in einem neuen Tab.
+            -->
+
+            <!-- STUDIO MOTTENBLAU -->
+            <section class="project" id="mottenblau">
                 <h2 class="visually-hidden">Studio Mottenblau</h2>
-                <div class="projekt-item" data-text="I designed the complete visual identity for the film collective <b>Studio Mottenblau,</b> including logo and thumbnail designs">
-                    <a href="https://www.youtube.com/@mottenblau" target="_blank" rel="noopener noreferrer" aria-label="Visit Studio Mottenblau YouTube channel">
-                        <img src="images/mottenblau_banner.png" alt="Studio Mottenblau banner design">
+                <div class="item" data-text="I designed the complete visual identity for the film collective <b>Studio Mottenblau</b>, including logo and thumbnail designs">
+                    <a href="https://www.youtube.com/@mottenblau" target="_blank" rel="noopener" aria-label="Studio Mottenblau on YouTube">
+                        <img src="images/mottenblau_banner.webp" width="1680" height="453" alt="Studio Mottenblau banner">
                     </a>
                 </div>
-                
-                <div class="social-links">
-                    <a class="social-link" href="https://www.youtube.com/@mottenblau" target="_blank" rel="noopener noreferrer" aria-label="Studio Mottenblau YouTube">
-                        <img src="images/youtube.png" alt="YouTube" width="24" height="24">
-                        <span>Studio Mottenblau</span>
-                    </a>
-                    <a class="social-link" href="https://www.instagram.com/mottenblau" target="_blank" rel="noopener noreferrer" aria-label="Studio Mottenblau Instagram">
-                        <img src="images/instagram.png" alt="Instagram" width="24" height="24">
-                        <span>mottenblau</span>
-                    </a>
+                <ul class="links">
+                    <li><a href="https://www.youtube.com/@mottenblau" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-youtube"/></svg><span class="visually-hidden">YouTube:</span> Studio Mottenblau</a></li>
+                    <li><a href="https://www.instagram.com/mottenblau" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-instagram"/></svg><span class="visually-hidden">Instagram:</span> mottenblau</a></li>
+                </ul>
+
+                <div class="grid grid-2">
+                    <div class="item" data-text="The short film <b>Perfekt</b> was shown at the German short film festival <i>Flimmern und Rauschen</i> in 2021">
+                        <a href="https://www.youtube.com/watch?v=_IE59hfcWHI" target="_blank" rel="noopener" aria-label="Watch the short film Perfekt on YouTube">
+                            <img src="images/perfekt.webp" width="860" height="484" alt="Poster of the short film Perfekt" loading="lazy">
+                        </a>
+                    </div>
+                    <div class="item" data-text="<b>Das ist mir nicht egal</b> (I Do Care) was an application film for the <i>Film University HFF</i>">
+                        <a href="https://www.youtube.com/watch?v=Y2YV3zWvwR0" target="_blank" rel="noopener" aria-label="Watch the film Das ist mir nicht egal on YouTube">
+                            <img src="images/dimne.webp" width="860" height="484" alt="Poster of the film Das ist mir nicht egal" loading="lazy">
+                        </a>
+                    </div>
+                    <div class="item" data-text="In <b>ANSA</b> a teenager grapples with his sense of identity in the aftermath of a classmate’s fatal accident">
+                        <a href="https://www.youtube.com/watch?v=gl4DXRnoizw" target="_blank" rel="noopener" aria-label="Watch the short film ANSA on YouTube">
+                            <img src="images/ansa.webp" width="860" height="484" alt="Poster of the short film ANSA" loading="lazy">
+                        </a>
+                    </div>
+                    <div class="item" data-text="The short film <b>STOWED</b> was shown at the German short film festival <i>Flimmern und Rauschen</i> in 2019">
+                        <a href="https://www.youtube.com/watch?v=DKGBjIYokao" target="_blank" rel="noopener" aria-label="Watch the short film STOWED on YouTube">
+                            <img src="images/stowed.webp" width="860" height="484" alt="Poster of the short film STOWED" loading="lazy">
+                        </a>
+                    </div>
                 </div>
-            </header>
+            </section>
 
-            <div class="projekt-galerie">
-                <article class="projekt-item" data-text="The short film <b>Perfekt</b> was shown at the German short film festival <i>Flimmern und Rauschen</i> in 2021">
-                    <a href="https://www.youtube.com/watch?v=_IE59hfcWHI" target="_blank" rel="noopener noreferrer" aria-label="Watch Perfekt short film">
-                        <img src="images/perfekt.jpg" alt="Perfekt short film poster">
-                    </a>
-                </article>
-                
-                <article class="projekt-item" data-text="<b>Das ist mir nicht egal</b> (I Do Care) was an application film for the Film University HFF">
-                    <a href="https://www.youtube.com/watch?v=Y2YV3zWvwR0" target="_blank" rel="noopener noreferrer" aria-label="Watch Das ist mir nicht egal film">
-                        <img src="images/dimne.jpg" alt="Das ist mir nicht egal film poster">
-                    </a>
-                </article>
-                
-                <article class="projekt-item" data-text="In <b>&nbsp;ANSA</b> a teenager grapples with his sense of identity in the aftermath of a classmate’s fatal accident">
-                    <a href="https://www.youtube.com/watch?v=gl4DXRnoizw" target="_blank" rel="noopener noreferrer" aria-label="Watch Ansa project">
-                        <img src="images/ansa.jpg" alt="Ansa project artwork">
-                    </a>
-                </article>
-                
-                <article class="projekt-item" data-text="The short film <b>STOWED</b> was shown at the German short film festival <i>Flimmern und Rauschen</i> in 2019">
-                    <a href="https://www.youtube.com/watch?v=DKGBjIYokao" target="_blank" rel="noopener noreferrer" aria-label="Watch STOWED short film">
-                        <img src="images/stowed.jpg" alt="STOWED short film poster">
-                    </a>
-                </article>
-            </div>
-        </section>
-
-                <!-- Overlay für Video -->
-       <div id="video-overlay">
-  <div class="video-container">
-    <div class="video-wrapper">
-      <video id="overlay-video" controls>
-        <source src="" type="video/mp4">
-        Dein Browser unterstützt keine HTML5-Videos.
-      </video>
-      <button id="close-overlay">&times;</button>
-    </div>
-  </div>
-</div>
-
-        <!-- Lord of the Lice Section -->
-        <section id="lotl" class="projekt">
-            <header class="projekt-header">
+            <!-- LORD OF THE LICE -->
+            <section class="project" id="lotl">
                 <h2 class="visually-hidden">Lord of the Lice</h2>
-                <div class="projekt-item" data-text="<b>Lord of the Lice</b> is a strategy and city-building game currently in development. I’m responsible for the UI/UX design and its implementation in code">
-                    <img src="images/lotl_banner.jpg" alt="Lord of the Lice game banner">
+                <div class="item" data-text="<b>Lord of the Lice</b> is a strategy and city-building game currently in development. I’m responsible for the UI/UX design and its implementation in code">
+                    <img src="images/lotl_banner.webp" width="1680" height="560" alt="Lord of the Lice game banner" loading="lazy">
+                </div>
+                <ul class="links">
+                    <li><a href="https://www.youtube.com/@Schabenfreude" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-youtube"/></svg><span class="visually-hidden">YouTube:</span> Lord of the Lice</a></li>
+                    <li><a href="https://www.instagram.com/studio_schabenfreude" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-instagram"/></svg><span class="visually-hidden">Instagram:</span> studio_schabenfreude</a></li>
+                </ul>
+
+                <div class="item" data-text="The resources in <i>Lord of the Lice</i> are based on things found on human heads — such as blood, hair and dandruff">
+                    <img src="images/resources.webp" width="1680" height="231" alt="Resource icons from Lord of the Lice" loading="lazy">
                 </div>
 
-                <div class="social-links">
-                    <a class="social-link" href="https://www.youtube.com/@Schabenfreude" target="_blank" rel="noopener noreferrer" aria-label="Lord of the Lice YouTube">
-                        <img src="images/youtube.png" alt="YouTube" width="24" height="24">
-                        <span>Lord of the Lice</span>
-                    </a>
-                    <a class="social-link" href="https://www.instagram.com/studio_schabenfreude" target="_blank" rel="noopener noreferrer" aria-label="Studio Schabenfreude Instagram">
-                        <img src="images/instagram.png" alt="Instagram" width="24" height="24">
-                        <span>studio_schabenfreude</span>
-                    </a>
-                </div>
-            </header>
-
-                                <div class="projekt-item" data-text="The resources in <i>Lord of the Lice</i> are based on things found on human heads — such as blood, hair and dandruff">
-                    <img src="images/resources.png">
+                <!-- Die drei Screenshots bilden zusammen eine graue Fläche (ohne Abstand) -->
+                <div class="ui-panel">
+                    <div class="ui-pair">
+                        <div class="item" data-text="The <b>Mother Louse</b> is the centerpiece of <i>Lord of the Lice</i>. It must always be supplied with blood">
+                            <a class="video-link" href="videos/Mutterlaus.mp4" data-video aria-label="Play video: the Mother Louse">
+                                <img src="images/mutterlaus.webp" width="900" height="1007" alt="Mother Louse interface" loading="lazy">
+                                <span class="play-badge"><svg class="icon" aria-hidden="true"><use href="#i-play"/></svg></span>
+                            </a>
+                        </div>
+                        <div class="item" data-text="Resources can be gathered using buildings such as the <b>Blood Drill</b>">
+                            <a class="video-link" href="videos/Blutbohrer.mp4" data-video aria-label="Play video: the Blood Drill">
+                                <img src="images/building_window.webp" width="800" height="1024" alt="Blood Drill building interface" loading="lazy">
+                                <span class="play-badge"><svg class="icon" aria-hidden="true"><use href="#i-play"/></svg></span>
+                            </a>
+                        </div>
                     </div>
+                    <div class="item" data-text="Resources can be traded between the heads via flight routes">
+                        <a class="video-link" href="videos/Flugroute.mp4" data-video aria-label="Play video: flight routes">
+                            <img src="images/flightroute.webp" width="1680" height="1279" alt="Flight route interface" loading="lazy">
+                            <span class="play-badge"><svg class="icon" aria-hidden="true"><use href="#i-play"/></svg></span>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CLAW -->
+            <section class="project" id="claw">
+                <h2 class="visually-hidden">Claw</h2>
+                <div class="item" data-text="During my one-year stay abroad in Japan at <i>Surugadai University</i>, I created the music video and album art for a Japanese musician">
+                    <a href="https://www.instagram.com/p/C0mVRHyyqGo/" target="_blank" rel="noopener" aria-label="CLAW music video on Instagram">
+                        <video src="videos/claw_header.mp4" poster="images/claw_header.webp" width="800" height="450" muted loop playsinline preload="none" data-autoplay></video>
+                    </a>
+                </div>
+                <div class="item" data-text="During my one-year stay abroad in Japan at <i>Surugadai University</i>, I created the music video and album art for a Japanese musician">
+                    <img src="images/claw_colors.webp" width="1680" height="945" alt="CLAW artwork in six colour variations" loading="lazy">
+                </div>
+            </section>
+
+            <!-- DIE SOZIALEN ROSEN -->
+            <section class="project" id="rose">
+                <h2 class="visually-hidden">Die Sozialen Rosen</h2>
+                <div class="rose-grid">
+                    <div class="rose-stack">
+                        <div class="item" data-text="<b>Die Sozialen Rosen</b> is a startup aimed at promoting volunteer work in Germany. I created its visual identity">
+                            <a href="https://www.instagram.com/die_sozialen_rosen/" target="_blank" rel="noopener" aria-label="Die Sozialen Rosen on Instagram">
+                                <img src="images/sozialerosen.webp" width="720" height="720" alt="Die Sozialen Rosen logo" loading="lazy">
+                            </a>
+                        </div>
+                        <div class="item" data-text="<b>Die Sozialen Rosen</b> is a startup aimed at promoting volunteer work in Germany. I created its visual identity">
+                            <a href="https://www.instagram.com/die_sozialen_rosen/" target="_blank" rel="noopener" aria-label="Die Sozialen Rosen on Instagram">
+                                <img src="images/sozialerosen2.webp" width="720" height="720" alt="Die Sozialen Rosen logo with wordmark" loading="lazy">
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Visitenkarte: dreht sich beim Hovern (Touch: beim Antippen) -->
+                    <div class="item card" data-text="Business card design for <b>Die Sozialen Rosen</b>">
+                        <div class="card-inner">
+                            <img class="card-face" src="images/businesscard.webp" width="940" height="1486" alt="Business card, front" loading="lazy">
+                            <img class="card-face card-back" src="images/businesscard_back.webp" width="940" height="1486" alt="Business card, back" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LOGOS -->
+            <section class="project" id="logos">
+                <h2 class="visually-hidden">Logos</h2>
+                <div class="grid grid-3">
+                    <div class="item" data-text="The logo of <b>Ruggelwabba</b>, a fictional earthworm cult for a point-and-click video game project">
+                        <img src="images/ruggelwabba.webp" width="560" height="560" alt="Ruggelwabba logo" loading="lazy">
+                    </div>
+                    <div class="item" data-text="Logo for the musician <b>WaveMelody</b>">
+                        <a href="https://www.youtube.com/@WaveMelody" target="_blank" rel="noopener" aria-label="WaveMelody on YouTube">
+                            <img src="images/wavemelody.webp" width="560" height="560" alt="WaveMelody logo" loading="lazy">
+                        </a>
+                    </div>
+                    <div class="item" data-text="<b>Horst</b> the chubby duck, personal project">
+                        <img src="images/horst.webp" width="560" height="560" alt="Horst the duck" loading="lazy">
+                    </div>
+                    <div class="item" data-text="Logo design for <b>Studio Mottenblau</b> — it depicts a poodle moth">
+                        <img src="images/mottenblau_logo.webp" width="560" height="560" alt="Studio Mottenblau logo" loading="lazy">
+                    </div>
+                    <div class="item" data-text="Logo for the startup <b>Die Sozialen Rosen</b> (The Social Roses)">
+                        <a href="https://www.instagram.com/die_sozialen_rosen/" target="_blank" rel="noopener" aria-label="Die Sozialen Rosen on Instagram">
+                            <img src="images/sozialerosen.webp" width="720" height="720" alt="Die Sozialen Rosen logo" loading="lazy">
+                        </a>
+                    </div>
+                    <div class="item" data-text="<b>Bischnablu</b> mascot design. It obviously, clearly, and without a doubt depicts a duck">
+                        <img src="images/bischnablu_green.webp" width="560" height="560" alt="Bischnablu mascot" loading="lazy">
+                    </div>
+                    <div class="item" data-text="Logo of the German eSports team <b>THROW</b>">
+                        <a href="https://play.toornament.com/en_GB/tournaments/4396538753679925248/participants/4512235442457870336/" target="_blank" rel="noopener" aria-label="Team THROW on Toornament">
+                            <img src="images/throw.webp" width="560" height="560" alt="THROW eSports logo" loading="lazy">
+                        </a>
+                    </div>
+                    <div class="item" data-text="<b>Kubik</b>, a practice project in the software <i>Blender</i>">
+                        <img src="images/kubik.webp" width="560" height="560" alt="Kubik 3D logo" loading="lazy">
+                    </div>
+                    <div class="item" data-text="Logo of the student council of <b>Campus Mühldorf</b> at the <i>Technical University of Applied Sciences Rosenheim</i>">
+                        <img src="images/cm.webp" width="560" height="560" alt="Campus Mühldorf student council logo" loading="lazy">
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- BISCHNABLU (ab 840 px Breite) -->
+        <aside class="mascot" aria-label="Mascot">
+            <div class="mascot-stage">
+                <div class="mascot-label">
+                    <p class="mascot-note">This is<br><b>Bischnablu</b>,<br>my mascot</p>
+                    <img class="mascot-curl" src="images/curly.webp" width="300" height="238" alt="" loading="lazy">
+                </div>
+
+                <div class="mascot-figure">
+                    <img class="mascot-body" src="images/bischnablu_body.webp" width="240" height="450" alt="" loading="lazy" draggable="false">
+                    <div class="mascot-head">
+                        <img class="head-open" src="images/bischnablu_head.webp" width="220" height="231" alt="" loading="lazy" draggable="false">
+                        <img class="head-closed" src="images/bischnablu_head_closed.webp" width="220" height="231" alt="" loading="lazy" draggable="false">
+                        <span class="eye eye-left"><span class="pupil"></span></span>
+                        <span class="eye eye-right"><span class="pupil"></span></span>
+                    </div>
+                </div>
+
+                <!-- Sprechblase: wird auf schmalen Bildschirmen per JS neben das Projekt verschoben -->
+                <div class="bubble" hidden>
+                    <div class="bubble-body">
+                        <p class="bubble-text"></p>
+                        <button class="bubble-action" type="button" hidden><svg class="icon" aria-hidden="true"><use href="#i-link"/></svg></button>
+                    </div>
+                    <svg class="bubble-tail" viewBox="0 0 44 24" aria-hidden="true">
+                        <path class="tail-border" transform="translate(0 1)" d="M25.27.91c2.05-.97 7.37.04 8.5 2l9.5 16c.77 2.7-1.21 3.96-4.38 2.96L3.77 8.41C.6 7.4-.18 7.55 1.86 6.59L25.27.91Z"/>
+                        <path d="M25.27.91c2.05-.97 7.37.04 8.5 2l9.5 16c.77 2.7-1.21 3.96-4.38 2.96L3.77 8.41C.6 7.4-.18 7.55 1.86 6.59L25.27.91Z"/>
+                    </svg>
+                </div>
             </div>
+        </aside>
 
-            <div class="projekt-galerie2">
-            <img src="images/mutterlaus.png" alt="Mother louse character design" class="video-thumb projekt-item" data-video="videos/Mutterlaus.mp4" data-text="The <b>&nbsp;Mother Louse</b> is the centerpiece of Lord of the Lice. It must always be supplied with blood <br><i>[click the image to see more]</i>" style="cursor: pointer;">
-            
-            <img src="images/building_window.png" alt="Game building interface" class="video-thumb projekt-item" data-video="videos/Blutbohrer.mp4" data-text="Resources can be gathered using buildings such as the Blood Drill <br><i>[click the image to see more]</i>" style="cursor: pointer;">
-        </div>
+        <footer class="site-footer">
+            <ul class="links">
+                <li><a href="mailto:nicolas.thiele@proton.me"><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg><span class="visually-hidden">E-mail:</span> nicolas.thiele@proton.me</a></li>
+                <li><a href="https://www.instagram.com/nigomasu" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-instagram"/></svg><span class="visually-hidden">Instagram:</span> nigomasu</a></li>
+            </ul>
+            <p>© Nicolas Thiele</p>
+        </footer>
+    </div>
 
-        <article class="projekt-item" data-video="videos/Flugroute.mp4" 
-         data-text="Resources can be traded between the heads via flight routes <br><i>[click the image to see more]</i>" 
-         style="cursor: pointer;">
-         <img src="images/flightroute.jpg" alt="Game flight route visualization" class="video-thumb">
-        </article>
-        </section>
-
-        <!-- Claw Project Section -->
-        <section id="claw" class="projekt">
-            <header class="projekt-header">
-                <h2 class="visually-hidden">Claw Music Project</h2>
-                <div class="projekt-item" data-text="During my one-year stay abroad in Japan at <i>Surugadai University,</i> I created the music video and album art for a Japanese musician">
-                    <a href="https://www.instagram.com/p/C0mVRHyyqGo/?utm_source=ig_web_copy_link&igsh=MWtjbm9jMTV6MnkzaA==" target="_blank">
-                    <img src="images/claw_header.gif" alt="Animated header for Claw music project">
-
-                    </a>
-                </div>
-            </header>
-
-             <article class="projekt-item" data-text="During my one-year stay abroad in Japan at <i>Surugadai University,</i> I created the music video and album art for a Japanese musician">
-                    <img src="images/claw_colors.jpg" alt="Claw music video visual 2">
-                </article>
-
-        </section>
-
-         <!-- Soziale Rosen Section -->
-         <section id="rose" class="projekt"></section>
-        
-         <div class="projekt-galerie3">
-          <div class="left"> 
-
-             <article class="projekt-item" data-text="<b>Die Sozialen Rosen</b> is a startup aimed at promoting volunteer work in Germany. I created its visual identity">
-                   <a href="https://www.instagram.com/die_sozialen_rosen/" target="_blank" rel="noopener noreferrer" aria-label="Visit Die Sozialen Rosen Instagram">
-                        <img src="images/sozialerosen.png" alt="Die Sozialen Rosen logo">
-                    </a>
-                </article>
-             
-                <article class="projekt-item" data-text="<b>Die Sozialen Rosen</b> is a startup aimed at promoting volunteer work in Germany. I created its visual identity">
-                   <a href="https://www.instagram.com/die_sozialen_rosen/" target="_blank" rel="noopener noreferrer" aria-label="Visit Die Sozialen Rosen Instagram">
-                        <img src="images/sozialerosen2.jpg" alt="Die Sozialen Rosen logo">
-                    </a>
-                </article>
-            </div>
-            <div class="card projekt-item" data-text="Business card design for <b>Die Sozialen Rosen</b>">
-                    <div class="card-inner">
-                    <div class="card-front">
-                        <img src="images/businesscard.png" alt="Visitenkarte Vorderseite">
-                    </div>
-                    <div class="card-back">
-                        <img src="images/businesscard_back.jpg" alt="Visitenkarte Rückseite">
-                    </div>
-                    </div>
-                </div>
-        </div>
-
-
-
-
-        <!-- Logo Portfolio Section -->
-        <section id="logos" class="projekt">
-            <header class="projekt-header">
-                <h2 class="visually-hidden">Logo Design Portfolio</h2>
-            </header>
-            
-            <div class="logo-grid">
-                <article class="projekt-item" data-text="The logo of a fictional earthworm cult for a point-and-click video game project">
-                    <img src="images/ruggelwabba.png" alt="Ruggelwabba logo">
-                </article>
-                
-                <article class="projekt-item" data-text="Logo for the musician <b>WaveMelody</b>">
-                    <a href="https://www.youtube.com/@WaveMelody" target="_blank" rel="noopener noreferrer" aria-label="Visit WaveM YouTube channel">
-                        <img src="images/wavemelody.jpg" alt="WaveM logo design">
-                    </a>
-                </article>
-                
-                <article class="projekt-item" data-text="Horst the chubby duck, personal project">
-                    <img src="images/horst.png" alt="Horst logo design">
-                </article>
-                
-                <article class="projekt-item" data-text="Logo design for <b>Studio Mottenblau</b> — it depicts a poodle moth">
-                    <img src="images/mottenblau_logo.png" alt="Studio Mottenblau logo">
-                </article>
-                
-                <article class="projekt-item" data-text="Logo for the startup <b>Die Sozialen Rosen</b> (The Social Roses)">
-                    <a href="https://www.instagram.com/die_sozialen_rosen/" target="_blank" rel="noopener noreferrer" aria-label="Visit Die Sozialen Rosen Instagram">
-                        <img src="images/sozialerosen.png" alt="Die Sozialen Rosen logo">
-                    </a>
-                </article>
-                
-                <article class="projekt-item" data-text="Bischnablu mascot design. It obviously, clearly, and without a doubt depicts a duck">
-                    <img src="images/bischnablu_green.png" alt="Bischnablu mascot in green">
-                </article>
-                
-                <article class="projekt-item" data-text="Logo of the German eSports team <b>THROW</b>">
-                    <a href="https://play.toornament.com/en_GB/tournaments/4396538753679925248/participants/4512235442457870336/" target="_blank" rel="noopener noreferrer" aria-label="Visit Throw team tournament page">
-                        <img src="images/throw.jpg" alt="Throw gaming team logo">
-                    </a>
-                </article>
-                
-                <article class="projekt-item" data-text="Practice project in the software <i>Blender</i>">
-                    <img src="images/kubik.jpg" alt="Kubik logo design">
-                </article>
-                
-                <article class="projekt-item" data-text="Logo of the student council of the Technical University of Applied Sciences Rosenheim: Campus Mühldorf">
-                    <img src="images/cm.jpg" alt="Campus Mühldorf Fachschaft logo">
-                </article>
-            </div>
-        </section>
-
-        <!-- Content spacer for better layout -->
-        <div class="content-spacer" aria-hidden="true"></div>
-    </main>
-
-    <!-- JavaScript -->
-    <script src="script.js"></script>
+    <!-- Video-Overlay (öffnet sich über Elemente mit data-video) -->
+    <dialog class="video-dialog" aria-label="Video">
+        <button class="dialog-close" type="button" aria-label="Close video"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+        <video controls playsinline></video>
+    </dialog>
 </body>
 </html>

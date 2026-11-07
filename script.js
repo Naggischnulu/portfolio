@@ -1,635 +1,530 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // --- GRUNDLAGEN & ELEMENTE AUSWÄHLEN ---
-    const projektItems = document.querySelectorAll('.projekt-item');
-    const bischnablu = document.querySelector('.bischnablu');
-    const bubble = document.querySelector('.bischnablu-bubble');
-    const bubbleTextContainer = bubble?.querySelector('.bubble-text');
-    const originalBubbleText = bubbleTextContainer?.innerHTML || '';
-    const kopfContainer = document.querySelector('.bischnablu-head-container');
-    const augen = document.querySelectorAll('.bischnablu-eye');
-    const sections = document.querySelectorAll('main > section[id], header[id]');
-    const navLinks = document.querySelectorAll('.sidebar a');
-    const gradientElements = document.querySelectorAll('.gradient-text-hover');
-    const mascotNameElement = document.querySelector('.interaction .mascot-name');
-    const mascot2 = document.querySelector('.mascot2');
-    const videoThumbs = document.querySelectorAll('.video-thumb'); // Behalten wir für die Desktop-Logik
-    const overlay = document.getElementById('video-overlay');
-    const overlayVideo = document.getElementById('overlay-video');
-    const closeBtn = document.getElementById('close-overlay');
-    
-    const SCROLL_OFFSET = 200; // Pixels vom oberen Bildschirmrand
-    const ACTIVE_SECTION_THRESHOLD = 300; // Frühere Markierung bei weniger Scroll
+// Ab dieser Breite steht Bischnablu in der rechten Spalte (gleicher Wert in style.css)
+const WIDE = matchMedia('(min-width: 840px)');
+const DESKTOP_NAV = matchMedia('(min-width: 1120px)');
 
-    let currentBubbleText = '';
-    let typingTimeout;
-    let isDragging = false;
+const $ = (selector, root = document) => root.querySelector(selector);
+const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
-    const preloadImg = new Image();
-    preloadImg.src = "images/bischnablu_head_closed.png";
+let isDragging = false;
+let lastPointerType = 'mouse';
+addEventListener('pointerdown', e => { lastPointerType = e.pointerType; }, true);
 
-    // SMOOTH SCROLL FÜR NAVBAR-LINKS
-    function setupSmoothScrolling() {
-        const navLinks = document.querySelectorAll('.sidebar a[href^="#"]');
-        
+
+// =============================================== //
+// NAVIGATION                                      //
+// =============================================== //
+
+const nav = $('.site-nav');
+const navToggle = $('.nav-toggle');
+const navLinks = $$('.nav-list a');
+
+function setMenuOpen(open) {
+    nav.classList.toggle('is-open', open);
+    navToggle.setAttribute('aria-expanded', open);
+}
+
+navToggle.addEventListener('click', () => setMenuOpen(!nav.classList.contains('is-open')));
+
+// Klick auf einen Link oder den abgedunkelten Hintergrund schließt das Menü
+nav.addEventListener('click', e => {
+    if (e.target === nav || e.target.closest('.nav-list a')) setMenuOpen(false);
+});
+
+addEventListener('keydown', e => {
+    if (e.key === 'Escape' && nav.classList.contains('is-open')) {
+        setMenuOpen(false);
+        navToggle.focus();
+    }
+});
+
+DESKTOP_NAV.addEventListener('change', () => setMenuOpen(false));
+
+// Aktiven Abschnitt markieren: der Abschnitt, der gerade bei 40 % der Fensterhöhe liegt
+const sectionObserver = new IntersectionObserver(entries => {
+    for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
         navLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                const targetId = this.getAttribute('href').substring(1);
-                const targetElement = document.getElementById(targetId);
-                
-                if (targetElement) {
-                    const targetPosition = targetElement.offsetTop - SCROLL_OFFSET;
-                    
-                    window.scrollTo({
-                        top: Math.max(0, targetPosition),
-                        behavior: 'smooth'
-                    });
-
-                    this.blur();  // Fokus entfernen, um den :focus-Stil nach dem Klick zu deaktivieren
-                }
-            });
+            if (link.hash === '#' + entry.target.id) link.setAttribute('aria-current', 'true');
+            else link.removeAttribute('aria-current');
         });
     }
+}, { rootMargin: '-40% 0px -59% 0px' });
+
+navLinks.forEach(link => {
+    const section = document.getElementById(link.hash.slice(1));
+    if (section) sectionObserver.observe(section);
+});
 
 
-    if (!bischnablu || !bubble || !bubbleTextContainer) {
-        console.warn('Missing essential elements for Bischnablu');
+// =============================================== //
+// SPRECHBLASE                                     //
+// =============================================== //
+
+const stage = $('.mascot-stage');
+const bubble = $('.bubble');
+const bubbleText = $('.bubble-text');
+const bubbleAction = $('.bubble-action');
+const bubbleIcon = $('use', bubbleAction);
+
+const ALLOWED_TAGS = new Set(['B', 'I', 'EM', 'STRONG', 'BR']);
+const VIDEO_HINT = {
+    mouse: '<br><i>[click the image to see more]</i>',
+    touch: '<br><i>[tap the image again to see more]</i>',
+};
+
+let currentItem = null;  // Projekt, über das Bischnablu gerade spricht
+let currentMode = null;  // 'hover' | 'focus' | 'touch'
+let armedItem = null;    // Touch: zweites Antippen desselben Projekts öffnet Link/Video
+
+// Link oder Video eines Projekts (für Touch-Knopf und Icon)
+function getAction(item) {
+    const video = $('[data-video]', item);
+    if (video) return { element: video, icon: 'play', label: 'Play video' };
+
+    const link = $('a[href]', item);
+    if (!link) return null;
+    const icon = link.hostname.includes('instagram') ? 'instagram'
+        : link.hostname.includes('youtu') ? 'play'
+        : 'link';
+    return { element: link, icon, label: 'Open link' };
+}
+
+// Schreibt den Text Buchstabe für Buchstabe in die Blase (<b>, <i>, <br> bleiben erhalten)
+function writeText(html) {
+    const template = document.createElement('template');
+    template.innerHTML = html;
+    let index = 0;
+
+    const copy = (from, to) => {
+        for (const node of from.childNodes) {
+            if (node.nodeType === Node.TEXT_NODE) {
+                for (const char of node.data) {
+                    const letter = document.createElement('span');
+                    letter.textContent = char;
+                    letter.style.animationDelay = `${index++ * 21}ms`;
+                    to.append(letter);
+                }
+            } else if (ALLOWED_TAGS.has(node.nodeName)) {
+                copy(node, to.appendChild(document.createElement(node.nodeName)));
+            }
+        }
+    };
+
+    bubbleText.replaceChildren();
+    copy(template.content, bubbleText);
+}
+
+function showInfo(item, mode) {
+    if (isDragging || (item === currentItem && mode === currentMode)) return;
+    currentItem = item;
+    currentMode = mode;
+
+    const action = getAction(item);
+    let text = item.dataset.text.trim();
+    if (action?.element.hasAttribute('data-video')) {
+        text += mode === 'touch' ? VIDEO_HINT.touch : VIDEO_HINT.mouse;
+    }
+    writeText(text);
+
+    // Den Knopf in der Blase gibt es nur bei Touch (mit der Maus klickt man direkt aufs Bild)
+    bubbleAction.hidden = mode !== 'touch' || !action;
+    if (!bubbleAction.hidden) {
+        bubbleIcon.setAttribute('href', '#i-' + action.icon);
+        bubbleAction.setAttribute('aria-label', action.label);
+    }
+
+    bubble.classList.toggle('is-passive', mode === 'hover');
+    bubble.hidden = false;
+
+    if (!WIDE.matches) {
+        placeNextTo(item, mode);
+    } else if (mode !== 'hover') {
+        // Bei Touch und Tastatur schaut Bischnablu zum Projekt (mit der Maus folgt er ohnehin dem Zeiger)
+        const rect = item.getBoundingClientRect();
+        lookAt(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    }
+}
+
+function hideInfo() {
+    bubble.hidden = true;
+    currentItem = currentMode = armedItem = null;
+    $('.card.is-flipped')?.classList.remove('is-flipped');
+}
+
+// Schmale Bildschirme: Blase über dem Projekt, Spitze zeigt auf seine Mitte
+function placeNextTo(item, mode) {
+    const rect = item.getBoundingClientRect();
+    const viewportWidth = document.documentElement.clientWidth;
+    const width = bubble.offsetWidth;
+    const height = bubble.offsetHeight;
+    const anchor = clamp(rect.left + rect.width / 2, 24, viewportWidth - 24);
+    const left = clamp(anchor - width * 0.3, 12, viewportWidth - width - 12);
+    let top = rect.top - height - 14;
+
+    if (top < 12) {
+        if (mode === 'touch') {
+            scrollBy({ top: top - 12, behavior: 'smooth' });
+        } else {
+            top = 12;
+        }
+    }
+
+    // Die Spitze der Sprechblase sitzt 18 px rechts von der Mitte der Grafik
+    bubble.style.setProperty('--tail-x', `${clamp(anchor - left - 18, 26, width - 26)}px`);
+    bubble.style.left = `${left + scrollX}px`;
+    bubble.style.top = `${top + scrollY}px`;
+}
+
+// Breite Bildschirme: Blase gehört zu Bischnablu, schmale: frei schwebend im Dokument
+function applyLayout() {
+    hideInfo();
+    bubble.classList.toggle('is-floating', !WIDE.matches);
+    bubble.style.left = bubble.style.top = '';
+    bubble.style.removeProperty('--tail-x');
+    (WIDE.matches ? stage : document.body).append(bubble);
+}
+
+applyLayout();
+WIDE.addEventListener('change', applyLayout);
+
+// Positionen stimmen nach einer Breitenänderung nicht mehr (Höhe ändert sich auf Handys beim Scrollen)
+let lastWidth = innerWidth;
+addEventListener('resize', () => {
+    if (innerWidth !== lastWidth && !WIDE.matches) hideInfo();
+    lastWidth = innerWidth;
+});
+
+// Maus: Hovern zeigt die Info
+document.addEventListener('pointerover', e => {
+    if (e.pointerType !== 'mouse') return;
+    const item = e.target.closest('[data-text]');
+    if (item) showInfo(item, 'hover');
+});
+
+document.addEventListener('pointerout', e => {
+    if (e.pointerType !== 'mouse' || WIDE.matches || currentMode !== 'hover') return;
+    const item = e.target.closest('[data-text]');
+    if (item && !item.contains(e.relatedTarget)) hideInfo();
+});
+
+// Tastatur: Fokus wirkt wie Hovern
+document.addEventListener('focusin', e => {
+    const item = e.target.closest('[data-text]');
+    if (item && e.target.matches(':focus-visible')) showInfo(item, 'focus');
+});
+
+document.addEventListener('focusout', e => {
+    if (!WIDE.matches && currentMode === 'focus' && !currentItem?.contains(e.relatedTarget)) hideInfo();
+});
+
+// Klicks: Video öffnen; bei Touch zeigt das erste Antippen die Info, das zweite öffnet
+document.addEventListener('click', e => {
+    if (e.target.closest('.bubble, .mascot-figure')) return;
+
+    const item = e.target.closest('[data-text]');
+    const isTouch = e.detail > 0 && lastPointerType !== 'mouse';  // Tastatur-Klicks haben detail 0
+
+    if (!item) {
+        if (isTouch) hideInfo();
         return;
     }
 
-    function setFixedInitialEyePosition() {
-        const augen = document.querySelectorAll('.bischnablu-eye');
-        const radius = 7;
-        const angle = -3 * Math.PI / 4;
-        const x = radius * Math.cos(angle);
-        const y = radius * Math.sin(angle);
-        augen.forEach(auge => {
-            auge.style.transform = `translate(${x}px, ${y}px)`;
-        });
-    }
-    setFixedInitialEyePosition();
-
-
-    // --- HELPER: TEXT ANIMATION ---
-    function animateText(container, text) {
-        container.innerHTML = '';
-        let charIndex = 0;
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = text;
-
-        function processNode(node, parent) {
-            if (node.nodeType === Node.TEXT_NODE) {
-                const letters = node.textContent.split('');
-                const wordWrapper = document.createElement('span');
-                wordWrapper.style.display = 'inline-block';
-                letters.forEach(letter => {
-                    const letterSpan = document.createElement('span');
-                    letterSpan.textContent = letter;
-                    letterSpan.style.animationDelay = `${charIndex * 21}ms`;
-                    wordWrapper.appendChild(letterSpan);
-                    charIndex++;
-                });
-                parent.appendChild(wordWrapper);
-            } else if (node.nodeType === Node.ELEMENT_NODE) {
-                const newElement = document.createElement(node.tagName.toLowerCase());
-                [...node.attributes].forEach(attr => newElement.setAttribute(attr.name, attr.value));
-                node.childNodes.forEach(child => processNode(child, newElement));
-                parent.appendChild(newElement);
-            }
-        }
-
-        tempDiv.childNodes.forEach(node => processNode(node, container));
-    }
-
-    // --- UPDATE BUBBLE TEXT (BASE) ---
-    function updateBubbleText(newText) {
-        if (newText === currentBubbleText || isDragging) return;
-       
-        bubble.style.visibility = "visible";
-        currentBubbleText = newText;
-        clearTimeout(typingTimeout);
-        animateText(bubbleTextContainer, newText);
-    }
-
-    // --- UPDATE BUBBLE TEXT WITH LINK ---
-    function updateBubbleTextWithLink(text, actionElement) {
-        if (text === currentBubbleText || isDragging) return;
-
-        bubble.style.visibility = "visible";
-        currentBubbleText = text;
-        clearTimeout(typingTimeout);
-        bubbleTextContainer.innerHTML = '';
-
-        const contentWrapper = document.createElement('div');
-        contentWrapper.style.display = 'flex';
-        contentWrapper.style.alignItems = 'center';
-        contentWrapper.style.gap = '10px';
-
-        const textContainer = document.createElement('span');
-        textContainer.style.flex = '1';
-        animateText(textContainer, text);
-        contentWrapper.appendChild(textContainer);
-
-        if (actionElement) {
-            const linkIcon = document.createElement('div');
-            linkIcon.className = 'bubble-link-icon';
-            
-            // --- NEUE LOGIK: Icon-Auswahl für Links und Videos ---
-            let iconSymbol = '🔗'; // Standard-Icon
-            const videoSrc = actionElement.getAttribute('data-video');
-            const linkHref = actionElement.href;
-
-            if (videoSrc) {
-                iconSymbol = '🎬'; // Video-Icon für lokale Videos
-            } else if (linkHref) {
-                if (linkHref.includes('youtube.com') || linkHref.includes('youtu.be')) iconSymbol = '🎬';
-                else if (linkHref.includes('instagram.com')) iconSymbol = '📷';
-                else if (linkHref.includes('toornament.com')) iconSymbol = '🎮';
-            }
-            
-            linkIcon.innerHTML = iconSymbol;
-            linkIcon.style.cssText = `
-                cursor: pointer; font-size: 1.2em; padding: 8px; border-radius: 50%;
-                background: rgba(255,255,255,0.2); transition: all 0.2s ease; user-select: none;
-                animation: pulseIcon 2s ease-in-out infinite; min-width: 32px; min-height: 32px;
-                display: flex; align-items: center; justify-content: center;
-            `;
-            linkIcon.setAttribute('role', 'button');
-            linkIcon.setAttribute('aria-label', `Aktion ausführen für ${text}`);
-            linkIcon.setAttribute('tabindex', '0');
-
-            linkIcon.addEventListener('mouseenter', () => {
-                linkIcon.style.background = 'rgba(255,255,255,0.4)';
-                linkIcon.style.transform = 'scale(1.1)';
-                linkIcon.style.animationPlayState = 'paused';
-            });
-            linkIcon.addEventListener('mouseleave', () => {
-                linkIcon.style.background = 'rgba(255,255,255,0.2)';
-                linkIcon.style.transform = 'scale(1)';
-                linkIcon.style.animationPlayState = 'running';
-            });
-
-            // --- NEUE LOGIK: Click-Handler für Links UND Videos ---
-            linkIcon.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (videoSrc) {
-                    // Video-Overlay öffnen
-                    overlayVideo.querySelector('source').setAttribute('src', videoSrc);
-                    overlayVideo.load();
-                    overlay.classList.add('active');
-                    overlayVideo.play();
-                } else if (linkHref) {
-                    // Normalen Link öffnen
-                    (actionElement.target === '_blank') ? window.open(linkHref, '_blank') : window.location.href = linkHref;
-                }
-                bischnablu.style.display = 'none';
-                currentBubbleText = '';
-            });
-
-            linkIcon.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') linkIcon.click();
-            });
-
-            contentWrapper.appendChild(linkIcon);
-        }
-
-        bubbleTextContainer.appendChild(contentWrapper);
-    }
-
-    // --- THROTTLE HELPER ---
-    function throttle(fn, delay) {
-        let lastCall = 0;
-        return function(...args) {
-            const now = Date.now();
-            if (now - lastCall >= delay) {
-                fn(...args);
-                lastCall = now;
-            }
-        };
-    }
-
-    // --- GERÄTE-ERKENNUNG ---
-    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-
-    if (isTouchDevice) {
-        // --- TOUCH LOGIK ---
-        mascotNameElement.textContent = 'Tap';
-        bischnablu.querySelector('.bischnablu-grafik').style.display = 'none';
-        bischnablu.style.position = 'absolute';
-        bischnablu.style.display = 'none';
-        currentBubbleText = '';
-        bischnablu.style.zIndex = '1000';
-        bubble.style.position = 'absolute';
-        bubble.style.bottom = '20px';
-
-        const elementsWithDataText = document.querySelectorAll('[data-text]');
-    
-        elementsWithDataText.forEach(element => {
-        const currentText = element.getAttribute('data-text');
-        
-        // Ersetze "click" durch "tap" oder umgekehrt
-        const updatedText = currentText.replace(
-            /\[click the image to see more\]/gi, 
-            `[tap the icon on the right to see more]`
-        );
-        
-        element.setAttribute('data-text', updatedText);
-        });
-        
-
-
-        projektItems.forEach(item => {
-            item.addEventListener('click', function(e) {
-                const linkElement = this.querySelector('a');
-                const isVideo = this.hasAttribute('data-video');
-
-                // Verhindert das sofortige Öffnen des Links oder eine andere Standardaktion
-                if (linkElement || isVideo) {
-                    e.preventDefault();
-                }
-
-                if (!this.dataset.text) return;
-
-                // Bestimmt, welches Element die Aktion auslöst (ein Link oder das Item selbst für ein Video)
-                const actionElement = linkElement || this;
-
-                bubble.style.left = '-90px';
-                const rect = this.getBoundingClientRect();
-                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-                bischnablu.style.left = `${rect.left + scrollLeft + rect.width / 2}px`;
-                bischnablu.style.top = `${rect.top + scrollTop}px`;
-                bischnablu.style.display = 'block';
-
-                updateBubbleTextWithLink(this.dataset.text, actionElement);
-
-                // RANDKORREKTUR
-                const bubbleRect = bubble.getBoundingClientRect();
-                const viewportWidth = window.innerWidth;
-                const edgePadding = 10;
-                let offsetX = 0;
-                if (bubbleRect.right > viewportWidth - edgePadding) {
-                    offsetX = (viewportWidth - edgePadding) - bubbleRect.right;
-                } else if (bubbleRect.left < edgePadding) {
-                    offsetX = edgePadding - bubbleRect.left;
-                }
-                bubble.style.left = `${-90 + offsetX}px`;
-
-                // SCROLL KORREKTUR
-                const topEdgePadding = 30;
-                if (bubbleRect.top < topEdgePadding) {
-                    window.scrollBy({ top: bubbleRect.top - topEdgePadding, behavior: 'smooth' });
-                }
-            });
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.projekt-item') && !e.target.closest('.bischnablu')) {
-                bischnablu.style.display = 'none';
-                currentBubbleText = '';
-            }
-        }, true);
-    } else {
-        // --- DESKTOP LOGIK ---
-        const wideScreenMouseOver = (e) => updateBubbleText(e.currentTarget.dataset.text);
-        const wideScreenMouseLeave = () => {
-            clearTimeout(typingTimeout);
-            
-        };
-        const narrowScreenMouseOver = function() {
-            const linkElement = this.querySelector('a');
-            if (!this.dataset.text) return;
-            
-            bubble.style.pointerEvents = 'none';
-            bubble.style.left = '-90px';
-            const rect = this.getBoundingClientRect();
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-            bischnablu.style.left = `${rect.left + scrollLeft + rect.width / 2}px`;
-            bischnablu.style.top = `${rect.top + scrollTop}px`;
-            bischnablu.style.display = 'block';
-
-            updateBubbleTextWithLink(this.dataset.text, linkElement);
-
-            // RANDKORREKTUR
-            const bubbleRect = bubble.getBoundingClientRect();
-            const viewportWidth = window.innerWidth;
-            const edgePadding = 10;
-            let offsetX = 0;
-            if (bubbleRect.right > viewportWidth - edgePadding) {
-                offsetX = (viewportWidth - edgePadding) - bubbleRect.right;
-            } else if (bubbleRect.left < edgePadding) {
-                offsetX = edgePadding - bubbleRect.left;
-            }
-            bubble.style.left = `${-90 + offsetX}px`;
-        };
-        const narrowScreenMouseLeave = () => {
-            bischnablu.style.display = 'none';
-            currentBubbleText = '';
-        };
-
-        const throttledMouseMove = throttle((e) => {
-            rotateElement(e, kopfContainer);
-            augen.forEach(auge => moveEye(e, auge));
-            updateGradient(e);
-        }, 16);
-
-        const cleanupMouseEvents = () => {
-            projektItems.forEach(item => {
-                item.removeEventListener('mouseover', wideScreenMouseOver);
-                item.removeEventListener('mouseover', narrowScreenMouseOver);
-                item.removeEventListener('mouseleave', narrowScreenMouseLeave);
-            });
-            document.querySelectorAll('.projekt-galerie, .logo-grid').forEach(gallery => {
-                gallery.removeEventListener('mouseleave', wideScreenMouseLeave);
-            });
-            document.removeEventListener('mousemove', throttledMouseMove);
-        };
-
-        const handleDesktopLayout = () => {
-            cleanupMouseEvents();
-            mascotNameElement.textContent = 'Hover';
-            bubble.style.left = '';
-
-            if (window.innerWidth < 840) {
-                bischnablu.querySelector('.bischnablu-grafik').style.display = 'none';
-                bischnablu.style.position = 'absolute';
-                bischnablu.style.display = 'none';
-                currentBubbleText = '';
-                bischnablu.style.zIndex = '1000';
-                bubble.style.position = 'absolute';
-                bubble.style.bottom = '20px';
-
-                projektItems.forEach(item => {
-                    item.addEventListener('mouseover', narrowScreenMouseOver);
-                    item.addEventListener('mouseleave', narrowScreenMouseLeave);
-                });
-            } else {
-                bischnablu.querySelector('.bischnablu-grafik').style.display = 'block';
-                bischnablu.style.display = 'block';
-                bischnablu.style.position = '';
-                bischnablu.style.zIndex = '';
-                bischnablu.style.top = '';
-                bischnablu.style.left = '';
-                bubble.style.bottom = '';
-                bubble.style.position = '';
-
-                projektItems.forEach(item => item.addEventListener('mouseover', wideScreenMouseOver));
-                document.querySelectorAll('.projekt-galerie, .logo-grid').forEach(gallery => 
-                    gallery.addEventListener('mouseleave', wideScreenMouseLeave)
-                );
-                document.addEventListener('mousemove', throttledMouseMove);
-            }
-        };
-
-        handleDesktopLayout();
-        let resizeTimeout;
-        window.addEventListener('resize', () => {
-            bischnablu.style.display = 'none'; 
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(handleDesktopLayout, 200);
-        });
-    }
-
-    // --- UNABHÄNGIGE FUNKTIONEN ---
-   const highlightActiveLink = () => {
-        let currentActiveSectionId = '';
-        const sections = document.querySelectorAll('main > section[id], header[id]');
-        const navLinks = document.querySelectorAll('.sidebar a');
-        
-        sections.forEach(section => {
-            const sectionTop = section.offsetTop;
-            const sectionHeight = section.offsetHeight;
-            const scrollPosition = window.scrollY + ACTIVE_SECTION_THRESHOLD;
-            
-            if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
-                currentActiveSectionId = section.getAttribute('id');
-            }
-        });
-        
-        if (!currentActiveSectionId) {
-            sections.forEach(section => {
-                if (window.scrollY + ACTIVE_SECTION_THRESHOLD >= section.offsetTop - 50) {
-                    currentActiveSectionId = section.getAttribute('id');
-                }
-            });
-        }
-        
-        navLinks.forEach(link => {
-            const isActive = link.getAttribute('href') === '#' + currentActiveSectionId;
-            link.classList.toggle('active', isActive);
-        });
-    };
-
-    // INITIALISIERUNG
-    setupSmoothScrolling();
-    
-    window.addEventListener('scroll', highlightActiveLink);
-    highlightActiveLink(); // Initiale Ausführung
-    
-    if (!isTouchDevice) {
-    // Suche nach allen Elementen, die Videos haben können
-    const videoElements = document.querySelectorAll('[data-video]');
-    
-    videoElements.forEach(element => {
-        element.addEventListener('click', (e) => {
-            // Verhindere das Standardverhalten für Links
+    if (isTouch) {
+        item.classList.contains('card') && item.classList.toggle('is-flipped');
+        if (armedItem !== item) {
             e.preventDefault();
-            
-            const videoSrc = element.getAttribute('data-video');
-            if (videoSrc) {
-                overlayVideo.querySelector('source').setAttribute('src', videoSrc);
-                overlayVideo.load();
-                overlay.classList.add('active');
-                overlayVideo.play();
-            }
-        });
-        
-        // Cursor-Style für bessere UX
-        element.style.cursor = 'pointer';
-    });
-}
-
-    closeBtn.addEventListener('click', () => {
-        overlayVideo.pause();
-        overlay.classList.remove('active');
-    });
-
-    overlay.addEventListener('click', (e) => {
-        if (e.target === overlay) {
-            overlayVideo.pause();
-            overlay.classList.remove('active');
+            showInfo(item, 'touch');
+            armedItem = item;
+            return;
         }
-    });
-        
-    function rotateElement(event, element) {
-        if (!element) return;
-        const maxRotationX = 10, maxRotationY = 10;
-        const relativeX = (event.clientX / window.innerWidth - 0.5) * 2;
-        const relativeY = (event.clientY / window.innerHeight - 0.5) * 2;
-        element.style.transform = `rotate(${relativeX * maxRotationX - relativeY * maxRotationY}deg)`;
+        if (getAction(item)) hideInfo();
     }
 
-    function moveEye(event, auge) {
-        if (!auge) return;
-        const radius = 7;
-        const rect = auge.getBoundingClientRect();
-        const augeX = rect.left + rect.width / 2;
-        const augeY = rect.top + rect.height / 2;
-        const deltaX = event.clientX - augeX;
-        const deltaY = event.clientY - augeY;
-        const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-        const deadZone = 25;
-        if (distance < deadZone) return;
-        const angleRad = Math.atan2(deltaY, deltaX);
-        auge.style.transform = `translate(${radius * Math.cos(angleRad)}px, ${radius * Math.sin(angleRad)}px)`;
+    // Mit gedrückter Cmd/Strg/Shift-Taste öffnet der Browser das Video normal in einem neuen Tab
+    const video = e.target.closest('[data-video]');
+    if (video && !(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey)) {
+        e.preventDefault();
+        openVideo(video);
     }
-
-    const movementStrength = 100;
-    function updateGradient(e) {
-        const xPos = 50 - (movementStrength / 2) + ((e.clientX / window.innerWidth) * movementStrength);
-        const yPos = 50 - (movementStrength / 2) + ((e.clientY / window.innerHeight) * movementStrength);
-        gradientElements.forEach(el => el.style.backgroundPosition = `${xPos}% ${yPos}%`);
-    }
-
-    const style = document.createElement('style');
-    style.textContent = `@keyframes pulseIcon { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } }`;
-    document.head.appendChild(style);
-
-    const hideAt = 100;
-    window.addEventListener('scroll', () => {
-        mascot2?.classList.toggle('hidden', window.scrollY > hideAt);
-    });
-    if (mascot2) {
-        mascot2.classList.toggle('hidden', window.scrollY > hideAt);
-    }
-
-    if (!isTouchDevice) {
-        const draggable = document.querySelector('.bischnablu-container');
-        if (draggable) {
-            isDragging = false;
-            let startX = 0, startY = 0;
-            let offsetX = 0, offsetY = 0;
-            let lastX = 0, lastY = 0;
-            let velocityX = 0;
-            let rotation = 0;
-            let rotationVelocity = 0;
-            let animationFrameId;
-            const rotationFactor = 0.3;
-            const springConstant = 0.1;
-            const dampingFactor = 0.8;
-            const head = kopfContainer.querySelector('.bischnablu-head');
-
-            draggable.style.cursor = 'grab';
-
-            const startDrag = (e) => {
-                isDragging = true;
-                startX = e.clientX - offsetX;
-                startY = e.clientY - offsetY;
-                lastX = e.clientX;
-                lastY = e.clientY;
-                head.src = "images/bischnablu_head_closed.png";
-                augen.forEach(auge => {
-                    auge.hidden = true;
-                });
-                draggable.style.transition = 'none';
-                draggable.style.cursor = 'grabbing';
-                e.preventDefault();
-                if (animationFrameId) cancelAnimationFrame(animationFrameId);
-                updateAnimation();
-            };
-
-            const drag = (e) => {
-                if (!isDragging) return;
-                const currentX = e.clientX;
-                velocityX = (currentX - lastX);
-                lastX = currentX;
-                offsetX = e.clientX - startX;
-                offsetY = e.clientY - startY;
-            };
-
-            const endDrag = () => {
-                if (!isDragging) return;
-                isDragging = false;
-                draggable.style.cursor = 'grab';
-                velocityX = 0;
-                draggable.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-                draggable.style.setProperty('--drag-x', '0px');
-                draggable.style.setProperty('--drag-y', '0px');
-                setTimeout(() => {
-                    draggable.style.transition = '';
-                    if (!isDragging) {
-                        cancelAnimationFrame(animationFrameId);
-                        draggable.style.transition = 'transform 0.3s ease-out';
-                        draggable.style.setProperty('--drag-rotate-z', '0deg');
-                        head.src = "images/bischnablu_head.png";
-                        augen.forEach(auge => {
-                            auge.hidden = false;
-                        });
-                    }
-                }, 400);
-                offsetX = 0;
-                offsetY = 0;
-            };
-            
-            const updateAnimation = () => {
-                if (!isDragging) {
-                    if (Math.abs(rotation) < 0.1 && Math.abs(rotationVelocity) < 0.1) {
-                        rotation = 0;
-                        rotationVelocity = 0;
-                        draggable.style.setProperty('--drag-rotate-z', `0deg`);
-                        return;
-                    }
-                }
-                const targetRotation = velocityX * rotationFactor;
-                const springForce = (targetRotation - rotation) * springConstant;
-                rotationVelocity += springForce;
-                rotationVelocity *= dampingFactor;
-                rotation += rotationVelocity;
-                draggable.style.setProperty('--drag-x', `${offsetX}px`);
-                draggable.style.setProperty('--drag-y', `${offsetY}px`);
-                draggable.style.setProperty('--drag-rotate-z', `${rotation}deg`);
-                animationFrameId = requestAnimationFrame(updateAnimation);
-            };
-
-            draggable.addEventListener('mousedown', startDrag);
-            document.addEventListener('mousemove', drag);
-            document.addEventListener('mouseup', endDrag);
-        }
-    }
-
-    // --- BURGER MENU LOGIK ---
-const burgerButton = document.querySelector('.burger-menu-button');
-const navLinksList = document.getElementById('nav-links-list');
-const navLinksItems = navLinksList.querySelectorAll('a');
-
-if (burgerButton && navLinksList) {
-    burgerButton.addEventListener('click', () => {
-        const isOpen = navLinksList.classList.toggle('is-open');
-        burgerButton.setAttribute('aria-expanded', isOpen);
-        document.body.classList.toggle('menu-open', isOpen);
-    });
-
-    // Menü schließen, wenn ein Link geklickt wird
-    navLinksItems.forEach(link => {
-        link.addEventListener('click', () => {
-            if (navLinksList.classList.contains('is-open')) {
-                navLinksList.classList.remove('is-open');
-                burgerButton.setAttribute('aria-expanded', 'false');
-                document.body.classList.remove('menu-open');
-            }
-        });
-    });
-
-    // Menü schließen, wenn außerhalb geklickt wird
-    document.addEventListener('click', (e) => {
-        // Überprüfen, ob das Menü offen ist und der Klick außerhalb des Menüs und des Buttons stattfand
-        if (navLinksList.classList.contains('is-open') && !navLinksList.contains(e.target) && !burgerButton.contains(e.target)) {
-            navLinksList.classList.remove('is-open');
-            burgerButton.setAttribute('aria-expanded', 'false');
-            document.body.classList.remove('menu-open');
-        }
-    });
-}
 });
+
+bubbleAction.addEventListener('click', () => {
+    const action = currentItem && getAction(currentItem);
+    if (!action) return;
+    if (action.element.hasAttribute('data-video')) openVideo(action.element);
+    else window.open(action.element.href, '_blank', 'noopener');
+    hideInfo();
+});
+
+
+// =============================================== //
+// BISCHNABLU: AUGEN, KOPF, SCHIMMER, ZIEHEN       //
+// =============================================== //
+
+const figure = $('.mascot-figure');
+const head = $('.mascot-head');
+const pupils = $$('.pupil');
+const label = $('.mascot-label');
+const shimmerTexts = $$('.shimmer');
+
+// Augen und Kopf gleiten zum Ziel (Maus oder angetipptes Projekt), statt zu springen.
+// Beide Pupillen bewegen sich gemeinsam; je näher das Ziel am Gesicht ist, desto weniger
+// weit schauen sie zur Seite – direkt über den Augen gibt es so kein Kippen oder Hängen.
+const EYE_RANGE = 7;      // maximale Auslenkung der Pupillen (px)
+const EYE_SOFTNESS = 50;  // ab etwa diesem Abstand (px) schauen die Pupillen ganz zur Seite
+const HEAD_TILT = 20;     // maximale Kopfneigung (Grad)
+
+let gazeTarget = null;
+let gaze = { x: -4.95, y: -4.95 };  // Startblick nach links oben, wie in style.css
+let headAngle = 0;
+let gazeFrame = 0;
+let lastFrameTime = 0;
+
+function lookAt(x, y) {
+    gazeTarget = { x, y };
+    wakeGaze();
+}
+
+function wakeGaze() {
+    if (gazeTarget && !gazeFrame && !isDragging && WIDE.matches) {
+        gazeFrame = requestAnimationFrame(animateGaze);
+    }
+}
+
+function animateGaze(time) {
+    const dt = lastFrameTime ? clamp(time - lastFrameTime, 0, 50) : 16;
+    lastFrameTime = time;
+
+    // Die Kopfmitte liegt genau zwischen den Augen und bleibt beim Neigen an ihrem Platz
+    const rect = head.getBoundingClientRect();
+    const dx = gazeTarget.x - (rect.left + rect.width / 2);
+    const dy = gazeTarget.y - (rect.top + rect.height / 2);
+    const reach = EYE_RANGE / Math.hypot(dx, dy, EYE_SOFTNESS);
+    const goalX = dx * reach;
+    const goalY = dy * reach;
+    const goalAngle = (gazeTarget.x / innerWidth - gazeTarget.y / innerHeight) * HEAD_TILT;
+
+    // Weich hinterhergleiten (Pupillen schneller als der Kopf)
+    gaze.x += (goalX - gaze.x) * (1 - Math.exp(-dt / 60));
+    gaze.y += (goalY - gaze.y) * (1 - Math.exp(-dt / 60));
+    headAngle += (goalAngle - headAngle) * (1 - Math.exp(-dt / 100));
+
+    // Die Pupillen sitzen im geneigten Kopf: Neigung herausrechnen, damit sie genau zum Ziel schauen
+    const angle = headAngle * Math.PI / 180;
+    const localX = gaze.x * Math.cos(angle) + gaze.y * Math.sin(angle);
+    const localY = gaze.y * Math.cos(angle) - gaze.x * Math.sin(angle);
+    head.style.transform = `rotate(${headAngle}deg)`;
+    pupils.forEach(pupil => { pupil.style.transform = `translate(${localX}px, ${localY}px)`; });
+
+    const settled = Math.hypot(goalX - gaze.x, goalY - gaze.y) < 0.01 && Math.abs(goalAngle - headAngle) < 0.01;
+    if (settled || isDragging) {
+        gazeFrame = lastFrameTime = 0;
+    } else {
+        gazeFrame = requestAnimationFrame(animateGaze);
+    }
+}
+
+// Schimmer-Text folgt der Maus
+let pointer = null;
+let pointerFrame = 0;
+
+function updateShimmer() {
+    pointerFrame = 0;
+    const position = `${pointer.x / innerWidth * 100}% ${pointer.y / innerHeight * 100}%`;
+    shimmerTexts.forEach(el => { el.style.backgroundPosition = position; });
+}
+
+document.addEventListener('pointermove', e => {
+    if (e.pointerType !== 'mouse') return;
+    pointer = { x: e.clientX, y: e.clientY };
+    pointerFrame ||= requestAnimationFrame(updateShimmer);
+    lookAt(e.clientX, e.clientY);
+}, { passive: true });
+
+// Bischnablu greifen, schleudern und zurückfedern lassen – eine kleine Physik-Simulation:
+// Er hängt an der Stelle, an der man ihn packt, und schwingt der Bewegung hinterher. Beim
+// Loslassen behält er seinen Schwung, eine Feder zieht ihn zurück und er wackelt nach.
+const RETURN_STIFFNESS = 150;  // Rückholfeder (höher = schneller zurück)
+const RETURN_DAMPING = 16;     // niedriger = stärkeres Überschwingen
+const SWING = 0.0002;          // Neigung pro px/s Geschwindigkeit (rad)
+const SWING_MAX = 0.5;         // maximale Neigung (rad, ≈ 29°)
+const SWING_STIFFNESS = 100;   // Pendel nach dem Loslassen: wie schnell er sich wieder aufrichtet
+const SWING_DAMPING = 14;      // Pendel nach dem Loslassen: niedriger = längeres Nachwackeln
+const HELD_STIFFNESS = 250;    // Pendel beim Ziehen: höher = folgt der Maus direkter
+const HELD_DAMPING = 22;
+const LIFT = 1.03;             // beim Greifen etwas größer, als würde er hochgehoben
+const MAX_THROW = 1500;        // höchste Wurfgeschwindigkeit (px/s)
+const CENTER_OF_MASS_Y = 110;  // Schwerpunkt in der Figur (px von oben)
+const STEP = 1 / 240;          // feste Zeitschritte: gleiches Verhalten bei 60 und 120 Hz
+
+let pos = { x: 0, y: 0 };      // Verschiebung gegenüber der Ruheposition (px)
+let vel = { x: 0, y: 0 };      // Geschwindigkeit (px/s)
+let tilt = 0;                  // Neigung (rad)
+let tiltVel = 0;
+let scale = 1;
+let scaleVel = 0;
+let pivot = null;              // Griffpunkt in Figur-Koordinaten = Drehpunkt
+let hang = 1;                  // +1 am Kopf gehalten, −1 an den Füßen, 0 am Schwerpunkt
+let grabOffset = null;
+let trail = [];                // letzte Positionen beim Ziehen, für die Wurfgeschwindigkeit
+let physicsFrame = 0;
+let physicsTime = 0;
+let leftover = 0;
+
+figure.addEventListener('pointerdown', e => {
+    if (e.button !== 0) return;
+    e.preventDefault();
+    figure.setPointerCapture(e.pointerId);
+
+    // Griffpunkt in Figur-Koordinaten – stimmt auch, wenn er gerade noch zurückfliegt
+    const stageRect = stage.getBoundingClientRect();
+    const origin = pivot ?? { x: figure.offsetWidth / 2, y: figure.offsetHeight / 2 };
+    const rx = e.clientX - stageRect.left - figure.offsetLeft - origin.x - pos.x;
+    const ry = e.clientY - stageRect.top - figure.offsetTop - origin.y - pos.y;
+    const cos = Math.cos(tilt), sin = Math.sin(tilt);
+    const grip = { x: origin.x + (cos * rx + sin * ry) / scale, y: origin.y + (cos * ry - sin * rx) / scale };
+
+    // Drehpunkt auf den Griffpunkt verlegen, ohne dass die Figur dabei springt
+    const dx = origin.x - grip.x, dy = origin.y - grip.y;
+    pos.x += dx - (cos * dx - sin * dy) * scale;
+    pos.y += dy - (sin * dx + cos * dy) * scale;
+    pivot = grip;
+    hang = clamp((CENTER_OF_MASS_Y - grip.y) / 60, -1, 1);
+
+    grabOffset = { x: e.clientX - pos.x, y: e.clientY - pos.y };
+    trail = [];
+    isDragging = true;
+    figure.classList.add('is-held', 'eyes-closed');
+    startPhysics();
+});
+
+figure.addEventListener('pointermove', e => {
+    if (isDragging) pos = { x: e.clientX - grabOffset.x, y: e.clientY - grabOffset.y };
+});
+
+function releaseFigure() {
+    if (!isDragging) return;
+    isDragging = false;
+    figure.classList.remove('is-held');
+    const speed = Math.hypot(vel.x, vel.y);
+    if (speed > MAX_THROW) {
+        vel.x *= MAX_THROW / speed;
+        vel.y *= MAX_THROW / speed;
+    }
+}
+
+figure.addEventListener('pointerup', releaseFigure);
+figure.addEventListener('pointercancel', releaseFigure);
+figure.addEventListener('lostpointercapture', releaseFigure);
+
+function startPhysics() {
+    if (!physicsFrame) {
+        physicsTime = 0;
+        physicsFrame = requestAnimationFrame(simulate);
+    }
+}
+
+function simulate(time) {
+    const dt = physicsTime ? clamp((time - physicsTime) / 1000, 0, 0.05) : STEP;
+    physicsTime = time;
+
+    if (isDragging) {
+        // Die Figur klebt am Zeiger; Geschwindigkeit aus den letzten 40 ms
+        trail.push({ time, x: pos.x, y: pos.y });
+        while (trail.length > 2 && time - trail[0].time > 40) trail.shift();
+        const span = (time - trail[0].time) / 1000;
+        vel = span > 0.01
+            ? { x: (pos.x - trail[0].x) / span, y: (pos.y - trail[0].y) / span }
+            : { x: 0, y: 0 };
+    }
+
+    for (leftover += dt; leftover >= STEP; leftover -= STEP) {
+        if (!isDragging) {
+            vel.x += (-RETURN_STIFFNESS * pos.x - RETURN_DAMPING * vel.x) * STEP;
+            vel.y += (-RETURN_STIFFNESS * pos.y - RETURN_DAMPING * vel.y) * STEP;
+            pos.x += vel.x * STEP;
+            pos.y += vel.y * STEP;
+        }
+        // Der Körper schwingt der Bewegung wie ein Pendel hinterher
+        const swingGoal = clamp(hang * vel.x * SWING, -SWING_MAX, SWING_MAX);
+        const stiffness = isDragging ? HELD_STIFFNESS : SWING_STIFFNESS;
+        const damping = isDragging ? HELD_DAMPING : SWING_DAMPING;
+        tiltVel += (stiffness * (swingGoal - tilt) - damping * tiltVel) * STEP;
+        tilt += tiltVel * STEP;
+        scaleVel += (400 * ((isDragging ? LIFT : 1) - scale) - 22 * scaleVel) * STEP;
+        scale += scaleVel * STEP;
+    }
+
+    figure.style.transformOrigin = `${pivot.x}px ${pivot.y}px`;
+    figure.style.transform = `translate(${pos.x}px, ${pos.y}px) rotate(${tilt}rad) scale(${scale})`;
+
+    const distance = Math.hypot(pos.x, pos.y);
+    const speed = Math.hypot(vel.x, vel.y);
+
+    // Gelandet: Augen auf, auch wenn er noch etwas nachwackelt
+    if (!isDragging && distance < 3 && speed < 60 && figure.classList.contains('eyes-closed')) {
+        figure.classList.remove('eyes-closed');
+        wakeGaze();
+    }
+
+    const resting = !isDragging && distance < 0.3 && speed < 3
+        && Math.abs(tilt) < 0.001 && Math.abs(tiltVel) < 0.01 && Math.abs(scale - 1) < 0.001;
+    if (resting) {
+        pos = { x: 0, y: 0 };
+        vel = { x: 0, y: 0 };
+        tilt = tiltVel = scaleVel = 0;
+        scale = 1;
+        pivot = null;
+        figure.style.transform = figure.style.transformOrigin = '';
+        physicsFrame = 0;
+        wakeGaze();
+    } else {
+        physicsFrame = requestAnimationFrame(simulate);
+    }
+}
+
+// "This is Bischnablu" verschwindet nach dem ersten Scrollen
+const updateLabel = () => label.classList.toggle('is-hidden', scrollY > 100);
+addEventListener('scroll', updateLabel, { passive: true });
+updateLabel();
+
+
+// =============================================== //
+// VIDEOS                                          //
+// =============================================== //
+
+const videoDialog = $('.video-dialog');
+const dialogVideo = $('video', videoDialog);
+let videoOpener = null;
+
+function openVideo(trigger) {
+    videoOpener = trigger;
+    dialogVideo.src = trigger.href;
+    videoDialog.showModal();
+    dialogVideo.play().catch(() => {});
+}
+
+videoDialog.addEventListener('close', () => {
+    dialogVideo.pause();
+    dialogVideo.removeAttribute('src');
+    dialogVideo.load();
+    videoOpener?.focus({ preventScroll: true });
+});
+
+// Klick neben das Video schließt das Overlay (Esc schließt es automatisch)
+videoDialog.addEventListener('click', e => {
+    if (e.target === videoDialog) videoDialog.close();
+});
+
+$('.dialog-close').addEventListener('click', () => videoDialog.close());
+
+// Endlos-Videos (ersetzen GIFs) laufen nur, solange sie sichtbar sind
+const autoplayObserver = new IntersectionObserver(entries => {
+    for (const { target, isIntersecting } of entries) {
+        if (isIntersecting) target.play().catch(() => {});
+        else target.pause();
+    }
+}, { rootMargin: '200px 0px' });
+
+$$('video[data-autoplay]').forEach(video => autoplayObserver.observe(video));
